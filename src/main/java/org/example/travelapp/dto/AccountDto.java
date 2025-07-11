@@ -16,7 +16,7 @@ public class AccountDto {
     private LocalDate dateOfBirth;
     private String gender;
     private String avatarUrl;
-    private String address;
+    private AddressDto address;
     private String role;
     private LocalDate registrationDate;
 

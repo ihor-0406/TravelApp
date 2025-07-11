@@ -31,7 +31,7 @@ public class BookingServiceImpl implements BookingService {
 
         booking.setBookingDate(bookingDto.getBookingDate());
         booking.setNumberOfPeople(bookingDto.getNumberOfPeople());
-        booking.setStatus(BookingStatus.valueOf(bookingDto.getStatus()));
+        booking.setStatus(bookingDto.getStatus());
 
         Account account = getCurrentAccount();
         Tour tour = tourRepository.findById(bookingDto.getTourId()).orElse(null);
@@ -63,7 +63,7 @@ public class BookingServiceImpl implements BookingService {
 
         booking.setBookingDate(bookingDto.getBookingDate());
         booking.setNumberOfPeople(bookingDto.getNumberOfPeople());
-        booking.setStatus(BookingStatus.valueOf(bookingDto.getStatus()));
+        booking.setStatus(bookingDto.getStatus());
 
         Account account = getCurrentAccount();
         booking.setTour(tourRepository.findById(bookingDto.getTourId()).orElseThrow());
@@ -82,8 +82,15 @@ public class BookingServiceImpl implements BookingService {
         dto.setTourId(booking.getTour().getId());
         dto.setBookingDate(booking.getBookingDate());
         dto.setNumberOfPeople(booking.getNumberOfPeople());
-        dto.setStatus(booking.getStatus().toString());
+        dto.setStatus(booking.getStatus());
         return dto;
+    }
+
+    @Override
+    public List<BookingDto> getByAccount(Account account) {
+        List<Booking> bookings = bookingRepository.findAllByAccount(account);
+        return bookings.stream().map(this :: toDto)
+                .collect(Collectors.toList());
     }
 
     private Account getCurrentAccount() {
@@ -97,6 +104,14 @@ public class BookingServiceImpl implements BookingService {
         return accountRepository.findByEmail(email)
                 .orElseThrow();
     }
-
-
+    private  BookingDto toDto(Booking b) {
+        return BookingDto.builder()
+                .id(b.getId())
+                .tourId(b.getTour().getId())
+                .tourTitle(b.getTour().getTitle())
+                .bookingDate(b.getBookingDate())
+                .numberOfPeople(b.getNumberOfPeople())
+                .status(b.getStatus())
+                .build();
+    }
 }
