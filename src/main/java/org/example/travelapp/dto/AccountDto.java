@@ -1,0 +1,23 @@
+package org.example.travelapp.dto;
+
+import lombok.Data;
+import org.example.travelapp.model.Account;
+import org.example.travelapp.model.Role;
+
+import java.time.LocalDate;
+
+@Data
+public class AccountDto {
+    private Long id;
+    private String email;
+    private String phone;
+    private String firstName;
+    private String lastName;
+    private LocalDate dateOfBirth;
+    private String gender;
+    private String avatarUrl;
+    private String address;
+    private String role;
+    private LocalDate registrationDate;
+
+}

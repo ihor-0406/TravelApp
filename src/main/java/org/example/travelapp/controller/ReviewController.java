@@ -1,0 +1,58 @@
+package org.example.travelapp.controller;
+
+import lombok.RequiredArgsConstructor;
+import org.example.travelapp.dto.ReviewDto;
+import org.example.travelapp.model.Account;
+import org.example.travelapp.model.Review;
+import org.example.travelapp.model.Tour;
+import org.example.travelapp.repository.TourRepository;
+import org.example.travelapp.service.AccountService;
+import org.example.travelapp.service.ReviewService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/reviews")
+@RequiredArgsConstructor
+public class ReviewController {
+    private final ReviewService reviewService;
+    private final AccountService accountService;
+    private final TourRepository tourRepository;
+
+    @GetMapping("/tour/{id}")
+    public ResponseEntity<List<ReviewDto>> getReviewsByTour(@PathVariable Long id) {
+
+        Tour tour = tourRepository.findById(id).orElse(null);
+        Account account = accountService.getCurrentAccountOrNull();
+
+        List<ReviewDto> reviews = reviewService.getReviewsByTour(tour, account);
+        return ResponseEntity.ok(reviews);
+    }
+
+    @PostMapping("/tour/{id}")
+    public ResponseEntity<Void> addReview(@PathVariable Long id, @RequestBody ReviewDto reviewDto) {
+        Tour tour = tourRepository.findById(id).orElse(null);
+        Account account = accountService.getCurrentAccount();
+
+        reviewService.addReview(tour,account, reviewDto);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/{reviewId}")
+    public ResponseEntity<Void> updateReview(@PathVariable Long reviewId, @RequestBody ReviewDto reviewDto) {
+        Account account = accountService.getCurrentAccount();
+
+        reviewService.editReview(reviewId,account,reviewDto);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{reviewId}")
+    public ResponseEntity<Void> deleteReview(@PathVariable Long reviewId) {
+        Account account = accountService.getCurrentAccount();
+
+        reviewService.delete(reviewId,account);
+        return ResponseEntity.ok().build();
+    }
+}
