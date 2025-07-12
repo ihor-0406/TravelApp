@@ -48,6 +48,9 @@ public class ReviewService {
 
         reviewRepository.delete(review);
     }
+    public  void adminDelete(Long id) {
+        reviewRepository.deleteById(id);
+    }
 
     public void updateAverageRating(Tour tour) {
         List<Review> reviews = reviewRepository.findByTour(tour);
@@ -99,4 +102,28 @@ public class ReviewService {
         reviewRepository.save(review);
         updateAverageRating(review.getTour());
     }
+
+    public List<ReviewDto> getAllReviews() {
+        return reviewRepository.findAll()
+                .stream()
+                .map(this::mapToDto)
+                .toList();
+    }
+
+    public void deleteReviewByAdmin(Long id) {
+        reviewRepository.deleteById(id);
+    }
+
+
+    private ReviewDto mapToDto(Review review) {
+        ReviewDto dto = new ReviewDto();
+        dto.setId(review.getId());
+        dto.setComment(review.getComment());
+        dto.setRating(review.getRating());
+        dto.setLastName(review.getAccount().getLastName());
+        dto.setDate(review.getReviewDate());
+        return dto;
+    }
+
+
 }

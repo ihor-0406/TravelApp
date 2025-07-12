@@ -9,6 +9,7 @@ import org.example.travelapp.repository.TourRepository;
 import org.example.travelapp.service.AccountService;
 import org.example.travelapp.service.ReviewService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -55,4 +56,19 @@ public class ReviewController {
         reviewService.delete(reviewId,account);
         return ResponseEntity.ok().build();
     }
+//    ===============================================================
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/admin/comments")
+    public ResponseEntity<List<ReviewDto>> getAllReviews() {
+        List<ReviewDto> reviews = reviewService.getAllReviews();
+        return ResponseEntity.ok(reviews);
+    }
+
+    @DeleteMapping("/admin/comments/{id}")
+    public ResponseEntity<Void> deleteReviewByAdmin(@PathVariable Long id) {
+        reviewService.deleteReviewByAdmin(id);
+        return ResponseEntity.ok().build();
+    }
+
 }

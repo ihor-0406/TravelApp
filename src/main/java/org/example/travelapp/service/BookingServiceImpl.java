@@ -1,5 +1,6 @@
 package org.example.travelapp.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.travelapp.dto.BookingDto;
 import org.example.travelapp.model.Account;
@@ -18,6 +19,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class BookingServiceImpl implements BookingService {
 
@@ -34,8 +36,8 @@ public class BookingServiceImpl implements BookingService {
         booking.setStatus(bookingDto.getStatus());
 
         Account account = getCurrentAccount();
-        Tour tour = tourRepository.findById(bookingDto.getTourId()).orElse(null);
-
+        Tour tour = tourRepository.findById(bookingDto.getTourId())
+                .orElseThrow(() -> new RuntimeException("Tour not found with id: " + bookingDto.getTourId()));
         booking.setAccount(account);
         booking.setTour(tour);
 
@@ -93,6 +95,29 @@ public class BookingServiceImpl implements BookingService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public void deleteBookingByAdmin(Long bookingId) {
+        bookingRepository.deleteById(bookingId);
+    }
+
+
+    @Override
+    public void confirmBooking(Long tourId, String email) {
+        Account account = accountRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Account not found with email: " + email));
+
+        List<Booking> bookings = bookingRepository.findAllByAccountAndTourId(account, tourId);
+        if (bookings.isEmpty()) {
+            throw new RuntimeException("No booking found for confirmation");
+        }
+
+        for (Booking booking : bookings) {
+            booking.setStatus(BookingStatus.CONFIRMED);
+            bookingRepository.save(booking);
+        }
+    }
+
+
     private Account getCurrentAccount() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String email;
@@ -104,14 +129,15 @@ public class BookingServiceImpl implements BookingService {
         return accountRepository.findByEmail(email)
                 .orElseThrow();
     }
-    private  BookingDto toDto(Booking b) {
-        return BookingDto.builder()
-                .id(b.getId())
-                .tourId(b.getTour().getId())
-                .tourTitle(b.getTour().getTitle())
-                .bookingDate(b.getBookingDate())
-                .numberOfPeople(b.getNumberOfPeople())
-                .status(b.getStatus())
-                .build();
+    private  BookingDto toDto(Booking booking) {
+        BookingDto dto = new BookingDto();
+
+        dto.setId(booking.getId());
+        dto.setTourId(booking.getTour().getId());
+        dto.setTourTitle(booking.getTour().getTitle());
+        dto.setBookingDate(booking.getBookingDate());
+        dto.setNumberOfPeople(booking.getNumberOfPeople());
+        dto.setStatus(booking.getStatus());
+        return dto;
     }
 }

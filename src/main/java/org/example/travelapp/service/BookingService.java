@@ -16,4 +16,8 @@ public interface BookingService {
     void deleteBooking(Long id);
 
     List<BookingDto> getByAccount(Account account);
+    void confirmBooking(Long tourId, String email);
+    void deleteBookingByAdmin(Long bookingId);
+
+
 }

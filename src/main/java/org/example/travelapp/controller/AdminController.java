@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.travelapp.model.Account;
 import org.example.travelapp.model.Role;
 import org.example.travelapp.repository.AccountRepository;
+import org.example.travelapp.service.AdminLogService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -14,10 +15,11 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/admin")
 @RequiredArgsConstructor
-@PreAuthorize("hasAuthority('ADMIN')")
+@PreAuthorize("hasRole('ADMIN')")
 public class AdminController {
 
     private final AccountRepository accountRepository;
+    private final AdminLogService adminLogService;
 
     @GetMapping("/users")
     public ResponseEntity<List<Account>> getAllUsers() {
@@ -38,5 +40,12 @@ public class AdminController {
         account.setRole(role);
         accountRepository.save(account);
         return ResponseEntity.ok("Role updated");
+    }
+
+    @GetMapping("/logs/{adminId}")
+    public ResponseEntity<?> getLogs(@PathVariable Long adminId) {
+        Account admin = accountRepository.findById(adminId)
+                .orElseThrow(() -> new IllegalArgumentException("Admin not found"));
+        return ResponseEntity.ok(adminLogService.getLogsByAdmin(admin));
     }
 }

@@ -14,4 +14,6 @@ import java.util.List;
 public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     List<Booking> findAllByAccount(Account account);
+    List<Booking> findAllByAccountAndTourId(Account account, Long tourId);
+
 }

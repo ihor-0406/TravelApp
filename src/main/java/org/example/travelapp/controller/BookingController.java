@@ -3,6 +3,8 @@ package org.example.travelapp.controller;
 import lombok.RequiredArgsConstructor;
 import org.example.travelapp.dto.BookingDto;
 import org.example.travelapp.service.BookingService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -37,6 +39,13 @@ public class BookingController {
     @DeleteMapping("/{id}")
     public void deleteBooking(@PathVariable Long id) {
         bookingService.deleteBooking(id);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/admin/{id}")
+    public ResponseEntity<Void> deleteAdmin(@PathVariable Long id) {
+        bookingService.deleteBookingByAdmin(id);
+        return ResponseEntity.noContent().build();
     }
 
 }

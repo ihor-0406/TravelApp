@@ -1,6 +1,7 @@
 package org.example.travelapp.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.example.travelapp.dto.TourCreateRequestDto;
 import org.example.travelapp.dto.TourFilterRequstDto;
 import org.example.travelapp.model.Account;
 import org.example.travelapp.model.Tour;
@@ -128,5 +129,15 @@ public class TourController {
 
         return Collections.singletonMap("isFavorite", fav);
     }
+
+//    ===================================================================
+
+    @PostMapping("/admin")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Tour> createTour(@RequestBody TourCreateRequestDto tourDto, Principal principal) {
+        Tour tour = tourService.create(tourDto, principal.getName());
+        return ResponseEntity.ok(tour);
+    }
+
 
 }

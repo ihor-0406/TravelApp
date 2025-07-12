@@ -51,7 +51,18 @@ public class AccountController {
         accountDto.setDateOfBirth(account.getDateOfBirth());
         accountDto.setGender(account.getGender() != null ? account.getGender().name() : null);
         accountDto.setAvatarUrl(account.getAvatarUrl());
-        accountDto.setAddress(account.getAddress() != null ? account.getAddress().toString() : null);
+        Address address = account.getAddress();
+        if (address != null) {
+            AddressDto addressDto = new AddressDto();
+            addressDto.setStreet(address.getStreet());
+            addressDto.setCity(address.getCity());
+            addressDto.setCountry(address.getCountry());
+
+            accountDto.setAddress(addressDto);
+        } else {
+            accountDto.setAddress(null);
+        }
+
         accountDto.setRole(account.getRole().name());
         accountDto.setRegistrationDate(account.getRegistrationDate());
         return ResponseEntity.ok(accountDto);
@@ -123,8 +134,18 @@ public class AccountController {
         accountDto.setDateOfBirth(account.getDateOfBirth());
         accountDto.setGender(account.getGender() != null ? account.getGender().name() : null);
         accountDto.setAvatarUrl(account.getAvatarUrl());
-       accountDto.setAddress(account.getAddress() != null ? account.getAddress().toString() : null);
-       accountDto.setRole(account.getRole().name());
+        Address address = account.getAddress();
+        if (address != null) {
+            AddressDto addressDto = new AddressDto();
+            addressDto.setStreet(address.getStreet());
+            addressDto.setCity(address.getCity());
+            addressDto.setCountry(address.getCountry());
+            accountDto.setAddress(addressDto);
+        } else {
+            accountDto.setAddress(null);
+        }
+
+        accountDto.setRole(account.getRole().name());
        accountDto.setRegistrationDate(account.getRegistrationDate());
        return accountDto;
     }
