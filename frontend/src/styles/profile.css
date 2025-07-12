@@ -1,0 +1,10 @@
+.bgnProfile{
+    position: relative;
+  width: 100vw;
+  height: 450px;
+  background-image: url('../image/profile.jpg');
+  background-size: cover;
+  background-position: center bottom;
+  background-repeat: no-repeat;
+  filter: brightness(80%);
+}

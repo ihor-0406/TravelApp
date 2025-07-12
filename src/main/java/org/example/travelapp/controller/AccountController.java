@@ -3,9 +3,7 @@ package org.example.travelapp.controller;
 import lombok.RequiredArgsConstructor;
 import org.example.travelapp.dto.AccountDto;
 import org.example.travelapp.dto.TourDto;
-import org.example.travelapp.model.Account;
-import org.example.travelapp.model.Address;
-import org.example.travelapp.model.Favorite;
+import org.example.travelapp.model.*;
 import org.example.travelapp.service.AccountService;
 import org.example.travelapp.service.FavoriteService;
 import org.springframework.http.ResponseEntity;
@@ -55,13 +53,13 @@ public class AccountController {
     }
 
     @PutMapping
-    public  AccountDto updateAccount(@RequestBody AccountDto accountDto) {
+    public  ResponseEntity<AccountDto> updateAccount(@RequestBody AccountDto accountDto) {
         Account account = accountService.getCurrentAccount();
         account.setFirstName(accountDto.getFirstName());
         account.setLastName(accountDto.getLastName());
         account.setPhone(accountDto.getPhone());
         account.setDateOfBirth(accountDto.getDateOfBirth());
-        account.setGender(accountDto.getGender());
+        account.setGender(Gender.valueOf(accountDto.getGender()));
 
         if(accountDto.getAddress() != null) {
             account.setAddress(new Address());
@@ -73,13 +71,36 @@ public class AccountController {
 
         return ResponseEntity.ok(toDto(account));
     }
-    @GetMapping("/favotites")
+    @GetMapping("/favorites")
     public ResponseEntity<List<TourDto>> getFavotites() {
         Account account = accountService.getCurrentAccount();
         List<TourDto> favotites = favoriteService.getFavoriteByUser(account).stream()
                 .map(Favorite::getTour)
                 .map(this :: toTourDto)
                 .collect(Collectors.toList());
+
         return ResponseEntity.ok(favotites);
     }
+
+    private AccountDto toDto(Account account) {
+        AccountDto accountDto = new AccountDto();
+        accountDto.setFirstName(account.getFirstName());
+        accountDto.setLastName(account.getLastName());
+        accountDto.setPhone(account.getPhone());
+        accountDto.setDateOfBirth(account.getDateOfBirth());
+        accountDto.setRole(account.getRole().name());
+        accountDto.setGender(account.getGender().name());
+        accountDto.setAddress(account.getAddress() != null ? account.getAddress().toString() : null);
+        return accountDto;
+    }
+
+    private TourDto toTourDto(Tour tour) {
+        TourDto dto = new TourDto();
+        dto.setId(tour.getId());
+        dto.setTitle(tour.getTitle());
+        dto.setDescription(tour.getDescription());
+        dto.setPrice(tour.getPrice());
+        return dto;
+    }
+
 }

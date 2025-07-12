@@ -18,6 +18,7 @@ export default function TourDetails() {
   const [comment, setComment] = useState("");
   const [rating, setRating] = useState(0);
   const [account, setAccount] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     axios.get(`/api/tours/${id}`)
@@ -25,8 +26,8 @@ export default function TourDetails() {
       .catch(err => console.error('Error loading tour:', err));
 
     axios.get('http://localhost:8080/api/profile', { withCredentials: true })
-  .then(res => setAccount(res.data))
-  .catch(() => setAccount(null));
+      .then(res => setAccount(res.data))
+      .catch(() => setAccount(null));
   }, [id]);
 
   const handleSubmitReview = () => {
@@ -38,9 +39,6 @@ export default function TourDetails() {
       })
       .catch(() => alert("Error submitting review"));
   };
-
-  const incrementPeople = () => setPeople(p => p + 1);
-  const decrementPeople = () => setPeople(p => (p > 1 ? p - 1 : 1));
 
   const renderStars = (rating) => {
     const fullStars = Math.floor(rating);
@@ -56,6 +54,9 @@ export default function TourDetails() {
       </>
     );
   };
+
+  const incrementPeople = () => setPeople(p => p + 1);
+  const decrementPeople = () => setPeople(p => (p > 1 ? p - 1 : 1));
 
   if (!tour) return <div className="text-center py-5">Loading tour...</div>;
 
@@ -115,7 +116,7 @@ export default function TourDetails() {
             </div>
 
             <button className="btn btn-outline-dark w-100 mb-2">Add to cart</button>
-            <button className="btn btn-success w-100">Book now</button>
+            <button className="btn btn-success w-100" onClick={() => setShowModal(true)}>Book now</button>
           </div>
         </div>
       </div>
@@ -157,6 +158,30 @@ export default function TourDetails() {
       ) : (
         <div className="alert alert-info mt-5">
           Please <a href="/login" className="alert-link">sign in</a> to leave a review.
+        </div>
+      )}
+
+      {/* MODAL */}
+      {showModal && (
+        <div className="modal fade show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Confirm Booking</h5>
+                <button type="button" className="btn-close" onClick={() => setShowModal(false)}></button>
+              </div>
+              <div className="modal-body">
+                <p><strong>Tour:</strong> {tour.title}</p>
+                <p><strong>Date:</strong> {date.toLocaleDateString()}</p>
+                <p><strong>People:</strong> {people}</p>
+                <p><strong>Total Price:</strong> €{(tour.price * people).toFixed(2)}</p>
+              </div>
+              <div className="modal-footer">
+                <button className="btn btn-secondary" onClick={() => setShowModal(false)}>Cancel</button>
+                <button className="btn btn-success">Confirm & Pay</button>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>
