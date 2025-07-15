@@ -27,4 +27,7 @@ public class Booking {
 
     @Enumerated(EnumType.STRING)
     private BookingStatus status;
+
+    @OneToOne
+    private Payment payment;
 }

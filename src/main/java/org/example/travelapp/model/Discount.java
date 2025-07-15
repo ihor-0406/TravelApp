@@ -24,7 +24,7 @@ public class Discount {
 
     private String description;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "tour_id")
     private Tour tour;
 }

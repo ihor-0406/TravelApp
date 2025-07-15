@@ -5,7 +5,6 @@ import lombok.Data;
 import org.example.travelapp.model.*;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.List;
 
 @Data

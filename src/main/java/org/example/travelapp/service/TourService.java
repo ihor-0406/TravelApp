@@ -5,6 +5,7 @@ import org.example.travelapp.dto.TourCreateRequestDto;
 import org.example.travelapp.dto.TourDto;
 import org.example.travelapp.dto.TourFilterRequstDto;
 import org.example.travelapp.model.*;
+import org.example.travelapp.repository.AccountRepository;
 import org.example.travelapp.repository.DiscountRepository;
 import org.example.travelapp.repository.TourRepository;
 import org.springframework.data.domain.Page;
@@ -12,7 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.time.LocalDate;
 import java.util.Optional;
 
 
@@ -21,7 +22,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class TourService {
     private final TourRepository tourRepository;
-    private final AccountService accountService;
+    private final AccountRepository accountRepository;
     private final DiscountRepository discountRepository;
 
     public Page<Tour> findAll( Pageable pageable) {
@@ -32,9 +33,10 @@ public class TourService {
         return tourRepository.findById(id);
     }
 
-    public Tour create(TourCreateRequestDto dto, String adminEmail) {
-        Account admin = accountService.findByEmail(adminEmail)
-                        .orElseThrow();
+
+    public Tour create(TourCreateRequestDto dto, String createdByEmail) {
+        Account account = accountRepository.findByEmail(createdByEmail)
+                .orElseThrow(() -> new RuntimeException("Account not found"));
 
         Tour tour = new Tour();
         tour.setTitle(dto.getTitle());
@@ -47,20 +49,11 @@ public class TourService {
         tour.setDifficulty(dto.getDifficulty());
         tour.setAvailability(dto.getAvailability());
         tour.setType(dto.getType());
-        tour.setCreatedBy(admin);
-
-        Tour savedTour = tourRepository.save(tour);
-
-        if(dto.getImageUrls() != null) {
-            List<TourImage> images = dto.getImageUrls().stream()
-                    .map(url -> new TourImage(null, url, savedTour))
-                    .toList();
-
-            savedTour.setAlbum(images);
-        }
+        tour.setCreatedBy(account);
 
         return tourRepository.save(tour);
     }
+
 
 
     public  Tour update(Long id, Tour updated, String adminEmail) {
@@ -86,27 +79,50 @@ public class TourService {
         return tourRepository.filterTours(request, pageable);
     }
 
-    private TourDto mapToDto(Tour tour) {
-        TourDto dto = new TourDto();
-        dto.setId(tour.getId());
-        dto.setTitle(tour.getTitle());
-        dto.setDescription(tour.getDescription());
-        dto.setPrice(tour.getPrice());
 
-        Discount discount = discountRepository.findAll().stream()
-                .filter(d ->d.getTour() != null && d.getTour().getId().equals(tour.getId()))
-                .findFirst().orElse(null);
+//    public TourDto mapToDto(Tour tour) {
+//        TourDto dto = new TourDto();
+//
+//        dto.setId(tour.getId());
+//        dto.setTitle(tour.getTitle());
+//        dto.setDescription(tour.getDescription());
+//        dto.setPrice(tour.getPrice());
+//
+//        if (tour.getImageUrl() != null && !tour.getImageUrl().isBlank()) {
+//            dto.setImageUrl(tour.getImageUrl());
+//        } else if (!tour.getAlbum().isEmpty()) {
+//            dto.setImageUrl(tour.getAlbum().get(0).getImageUrls());
+//        } else {
+//            dto.setImageUrl("https://via.placeholder.com/400x250");
+//        }
+//
+//        dto.setRating(
+//                tour.getAverageRating() != null
+//                        ? BigDecimal.valueOf(tour.getAverageRating())
+//                        : BigDecimal.ZERO
+//        );
+//
+//        Optional<Discount> activeDiscount = tour.getDiscounts()
+//                .stream()
+//                .filter(d ->
+//                        !d.getStartDate().isAfter(LocalDate.now()) &&
+//                                !d.getEndDate().isBefore(LocalDate.now())
+//                )
+//                .findFirst();
+//
+//        if (activeDiscount.isPresent()) {
+//            BigDecimal discountValue = activeDiscount.get().getValue();
+//            BigDecimal discountPrice = tour.getPrice().subtract(
+//                    tour.getPrice().multiply(discountValue).divide(BigDecimal.valueOf(100))
+//            );
+//            dto.setDiscountValue(discountValue);
+//            dto.setDiscountPrice(discountPrice);
+//        } else {
+//            dto.setDiscountValue(BigDecimal.ZERO);
+//            dto.setDiscountPrice(tour.getPrice());
+//        }
+//
+//        return dto;
+//    }
 
-        if(discount != null) {
-            dto.setDiscountValue(discount.getValue());
-            dto.setDiscountPrice(tour.getPrice()
-                    .multiply(BigDecimal.ONE.subtract(discount.getValue()))
-                    .setScale(2,BigDecimal.ROUND_HALF_UP)
-            );
-        }else {
-            dto.setDiscountValue(BigDecimal.ZERO);
-            dto.setDiscountPrice(tour.getPrice());
-        }
-        return dto;
-    }
 }

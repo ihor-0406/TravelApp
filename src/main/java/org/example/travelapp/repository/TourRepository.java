@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface TourRepository extends JpaRepository<Tour, Long>, TourFilterRepository {
+public interface TourRepository extends JpaRepository<Tour, Long>, TourRepositoryCustom {
 
     List<Tour> findByLocationContainingIgnoreCase(String location);
 

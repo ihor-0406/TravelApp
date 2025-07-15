@@ -4,17 +4,18 @@ import lombok.Data;
 import org.example.travelapp.model.Availability;
 import org.example.travelapp.model.Difficulty;
 import org.example.travelapp.model.TourType;
-
-import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 public class TourFilterRequstDto {
-    private String keyword;
-    private String location;
-    private BigDecimal minPrice;
-    private BigDecimal maxPrice;
-    private String duration;
-    private Difficulty difficulty;
-    private Availability availability;
-    private TourType tourType;
+    private List<String> locations;
+    private List<TourType> types;
+    private List<Integer> maxPeople;
+    private List<Difficulty> difficulty;
+    private List<Availability> availability;
+//    private List<Integer> ratings;
+    private Integer minPrice;
+    private Integer maxPrice;
+    private String sortBy;
 }
+

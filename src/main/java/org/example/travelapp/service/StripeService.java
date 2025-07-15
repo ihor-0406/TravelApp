@@ -16,8 +16,9 @@ public class StripeService {
     @Value("${stripe.secret.key}")
     private String secretKey;
 
-    public String getSecretKey() {
-        return secretKey;
+    @PostConstruct
+    public void init() {
+        Stripe.apiKey = secretKey;
     }
 
     public Session createSession(SessionCreateParams params) {

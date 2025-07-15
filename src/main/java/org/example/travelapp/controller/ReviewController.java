@@ -3,7 +3,6 @@ package org.example.travelapp.controller;
 import lombok.RequiredArgsConstructor;
 import org.example.travelapp.dto.ReviewDto;
 import org.example.travelapp.model.Account;
-import org.example.travelapp.model.Review;
 import org.example.travelapp.model.Tour;
 import org.example.travelapp.repository.TourRepository;
 import org.example.travelapp.service.AccountService;
@@ -13,6 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/reviews")
@@ -35,25 +35,25 @@ public class ReviewController {
     @PostMapping("/tour/{id}")
     public ResponseEntity<Void> addReview(@PathVariable Long id, @RequestBody ReviewDto reviewDto) {
         Tour tour = tourRepository.findById(id).orElse(null);
-        Account account = accountService.getCurrentAccount();
+        Optional<Account> account = accountService.getCurrentAccount();
 
-        reviewService.addReview(tour,account, reviewDto);
+        reviewService.addReview(tour, account.orElse(null), reviewDto);
         return ResponseEntity.ok().build();
     }
 
     @PutMapping("/{reviewId}")
     public ResponseEntity<Void> updateReview(@PathVariable Long reviewId, @RequestBody ReviewDto reviewDto) {
-        Account account = accountService.getCurrentAccount();
+        Optional<Account> account = accountService.getCurrentAccount();
 
-        reviewService.editReview(reviewId,account,reviewDto);
+        reviewService.editReview(reviewId, account.orElse(null),reviewDto);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{reviewId}")
     public ResponseEntity<Void> deleteReview(@PathVariable Long reviewId) {
-        Account account = accountService.getCurrentAccount();
+        Optional<Account> account = accountService.getCurrentAccount();
 
-        reviewService.delete(reviewId,account);
+        reviewService.delete(reviewId, account.orElse(null));
         return ResponseEntity.ok().build();
     }
 //    ===============================================================

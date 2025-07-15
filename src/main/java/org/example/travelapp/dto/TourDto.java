@@ -14,6 +14,9 @@ public class TourDto {
     private String title;
     private String description;
     private BigDecimal price;
+    private String imageUrl;
     private BigDecimal discountValue; //..%..
     private BigDecimal discountPrice;
+    private BigDecimal rating;
+
 }

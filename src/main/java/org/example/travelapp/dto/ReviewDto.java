@@ -1,6 +1,5 @@
 package org.example.travelapp.dto;
 
-import jakarta.persistence.Id;
 import lombok.Data;
 
 import java.time.LocalDate;

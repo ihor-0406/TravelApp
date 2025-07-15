@@ -19,5 +19,7 @@ public class BookingDto {
     private LocalDate bookingDate;
     private Integer numberOfPeople;
     private BookingStatus status;
+    private String accountEmail;
+
 
 }

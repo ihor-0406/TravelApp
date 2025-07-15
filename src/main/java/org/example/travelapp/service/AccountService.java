@@ -4,8 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.example.travelapp.model.Account;
 import org.example.travelapp.repository.AccountRepository;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
@@ -55,21 +57,19 @@ public class AccountService {
         String email = authentication.getName();
         return accountRepository.findByEmail(email).orElse(null);
     }
-    public Account getCurrentAccount() {
+
+    public Optional<Account> getCurrentAccount() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String email;
-
-        if (principal instanceof org.springframework.security.oauth2.core.user.OAuth2User oAuth2User) {
-            email = oAuth2User.getAttribute("email");
-        } else if (principal instanceof org.springframework.security.core.userdetails.UserDetails userDetails) {
-            email = userDetails.getUsername();
+        if (principal instanceof UserDetails) {
+            String email = ((UserDetails) principal).getUsername();
+            return accountRepository.findByEmail(email);
         } else {
-            email = principal.toString();
+            return Optional.empty();
         }
-
-        return accountRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Account not found for email: " + email));
     }
+
+
+
 
     public String storeAvatar(MultipartFile file) {
         if (file == null || file.isEmpty()) {

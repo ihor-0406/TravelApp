@@ -9,14 +9,15 @@ import org.example.travelapp.model.*;
 import org.example.travelapp.service.AccountService;
 import org.example.travelapp.service.BookingService;
 import org.example.travelapp.service.FavoriteService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -70,19 +71,19 @@ public class AccountController {
 
     @PutMapping
     public  ResponseEntity<AccountDto> updateAccount(@RequestBody AccountDto accountDto) {
-        Account account = accountService.getCurrentAccount();
-        account.setFirstName(accountDto.getFirstName());
-        account.setLastName(accountDto.getLastName());
-        account.setPhone(accountDto.getPhone());
-        account.setDateOfBirth(accountDto.getDateOfBirth());
+        Optional<Account> account = accountService.getCurrentAccount();
+        account.get().setFirstName(accountDto.getFirstName());
+        account.get().setLastName(accountDto.getLastName());
+        account.get().setPhone(accountDto.getPhone());
+        account.get().setDateOfBirth(accountDto.getDateOfBirth());
 
         if(accountDto.getGender() != null) {
-            account.setGender(Gender.valueOf(accountDto.getGender()));
+            account.get().setGender(Gender.valueOf(accountDto.getGender()));
         }else {
-            account.setGender(null);
+            account.get().setGender(null);
         }
 
-        account.setAvatarUrl(accountDto.getAvatarUrl());
+        account.get().setAvatarUrl(accountDto.getAvatarUrl());
 
         AddressDto addressDto = accountDto.getAddress();
         Address address = new Address();
@@ -92,15 +93,15 @@ public class AccountController {
             address.setZipcode(addressDto.getZipCode());
             address.setCountry(addressDto.getCountry());
         }
-        account.setAddress(address);
+        account.get().setAddress(address);
 
-        accountService.save(account);
-        return ResponseEntity.ok(toDto(account));
+        accountService.save(account.orElse(null));
+        return ResponseEntity.ok(toDto(account.orElse(null)));
     }
     @GetMapping("/favorites")
     public ResponseEntity<List<TourDto>> getFavotites() {
-        Account account = accountService.getCurrentAccount();
-        List<TourDto> favotites = favoriteService.getFavoriteByUser(account).stream()
+        Optional<Account> account = accountService.getCurrentAccount();
+        List<TourDto> favotites = favoriteService.getFavoriteByUser(account.orElse(null)).stream()
                 .map(Favorite::getTour)
                 .map(this :: toTourDto)
                 .collect(Collectors.toList());
@@ -109,18 +110,22 @@ public class AccountController {
 
     @GetMapping("/bookings")
     public ResponseEntity<List<BookingDto>> getBookings() {
-        Account account = accountService.getCurrentAccount();
+        Account account = accountService.getCurrentAccountOrNull();
+        if (account == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
         List<BookingDto> bookings = bookingService.getByAccount(account);
         return ResponseEntity.ok(bookings);
     }
 
     @PostMapping("/avatar")
     public ResponseEntity<AccountDto> updateAvatar(@RequestParam("file") MultipartFile file)  {
-        Account account = accountService.getCurrentAccount();
+        Optional<Account> account = accountService.getCurrentAccount();
         String url = accountService.storeAvatar(file);
-        account.setAvatarUrl(url);
-        accountService.save(account);
-        return ResponseEntity.ok(toDto(account));
+        account.get().setAvatarUrl(url);
+        accountService.save(account.orElse(null));
+        return ResponseEntity.ok(toDto(account.orElse(null)));
     }
 
 

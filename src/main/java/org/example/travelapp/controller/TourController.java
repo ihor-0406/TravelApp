@@ -2,11 +2,14 @@ package org.example.travelapp.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.example.travelapp.dto.TourCreateRequestDto;
+import org.example.travelapp.dto.TourDto;
 import org.example.travelapp.dto.TourFilterRequstDto;
 import org.example.travelapp.model.Account;
+import org.example.travelapp.model.Discount;
 import org.example.travelapp.model.Tour;
 import org.example.travelapp.model.TourImage;
 import org.example.travelapp.repository.TourImageRepository;
+import org.example.travelapp.repository.TourRepository;
 import org.example.travelapp.service.AccountService;
 import org.example.travelapp.service.FavoriteService;
 import org.example.travelapp.service.TourService;
@@ -21,13 +24,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.math.BigDecimal;
 import java.security.Principal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Collections;
 import java.util.Map;
-
-
-import static com.fasterxml.jackson.databind.type.LogicalType.Collection;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -36,20 +40,31 @@ import static com.fasterxml.jackson.databind.type.LogicalType.Collection;
 public class TourController {
 
     private final TourService tourService;
+    private final TourRepository tourRepository;
     private final TourImageRepository tourImageRepository;
     private final FavoriteService  favoriteService;
     private final AccountService accountService;
 
     @GetMapping
-    public ResponseEntity<List<Tour>> getAllTour (@PageableDefault(size = 10) Pageable pageable) {
-       Page<Tour> tours = tourService.findAll(pageable);
-        return ResponseEntity.ok(tours.getContent());
+    public ResponseEntity<List<TourDto>> getAllTour(@PageableDefault(size = 50) Pageable pageable) {
+        Page<Tour> tours = tourService.findAll(pageable);
+
+        List<TourDto> dtos = tours.getContent().stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(dtos);
     }
 
     @PostMapping("/filter")
-    public Page<Tour> filterTours(@RequestBody TourFilterRequstDto filter,
-                                  @PageableDefault(size = 10) Pageable pageable) {
-        return tourService.filterTours(filter, pageable);
+    public ResponseEntity<Page<TourDto>> filterTours(@RequestBody TourFilterRequstDto filters,
+                                                     @PageableDefault(size = 50) Pageable pageable) {
+        System.out.println("Received filter request: " + filters);
+        Page<Tour> result = tourService.filterTours(filters, pageable);
+
+        Page<TourDto> dtoPage = result.map(this::mapToDto);
+
+        return ResponseEntity.ok(dtoPage);
     }
 
     @GetMapping("/{id}")
@@ -66,16 +81,40 @@ public class TourController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+
 //    ==================================================================================================================
 //    ==================                Admin               ============================================================
+//    ==================================================================================================================
+
 
     @PutMapping("/admin/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Tour> updateTour(@PathVariable Long id,
-                                           @RequestBody Tour updatedTour,
+                                           @RequestBody TourCreateRequestDto dto,
                                            Principal principal) {
-        Tour tour = tourService.update(id, updatedTour, principal.getName());
-        return ResponseEntity.ok(tour);
+        Optional<Tour> optionalTour = tourRepository.findById(id);
+        if (optionalTour.isEmpty()) return ResponseEntity.notFound().build();
+
+        Tour tour = optionalTour.get();
+        updateEntityFromDto(tour, dto);
+        tourRepository.save(tour);
+
+
+        List<TourImage> oldImages = tourImageRepository.findByTour(tour);
+        tourImageRepository.deleteAll(oldImages);
+
+        if (dto.getImageUrls() != null) {
+            for (String url : dto.getImageUrls()) {
+                if (url != null && !url.trim().isEmpty()) {
+                    TourImage img = new TourImage();
+                    img.setTour(tour);
+                    img.setImageUrls(url.trim());
+                    tourImageRepository.save(img);
+                }
+            }
+        }
+
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/admin/{id}")
@@ -85,7 +124,27 @@ public class TourController {
         return ResponseEntity.noContent().build();
     }
 
-//    ================================================================================================
+    @PostMapping("/admin")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Tour> createTour(@RequestBody TourCreateRequestDto tourDto, Principal principal) {
+        Tour tour = tourService.create(tourDto, principal.getName());
+
+        if (tourDto.getImageUrls() != null) {
+            for (String url : tourDto.getImageUrls()) {
+                if (url != null && !url.trim().isEmpty()) {
+                    TourImage img = new TourImage();
+                    img.setTour(tour);
+                    img.setImageUrls(url.trim());
+                    tourImageRepository.save(img);
+                }
+            }
+        }
+
+        return ResponseEntity.ok(tour);
+    }
+
+    //    ================================================================================================
+
     @PostMapping("/{id}/favorite")
     public ResponseEntity<Void> addFavorite(@PathVariable("id") Long id,
                                             Authentication auth) {
@@ -94,10 +153,10 @@ public class TourController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        Account account = accountService.getCurrentAccount();
+        Optional<Account> account = accountService.getCurrentAccount();
         Tour tour = tourService.findById(id)
                 .orElseThrow();
-        favoriteService.addToFavorites(account, tour);
+        favoriteService.addToFavorites(account.orElse(null), tour);
         return ResponseEntity.ok().build();
     }
 
@@ -120,24 +179,75 @@ public class TourController {
 
     @GetMapping("/{id}/favorite")
     public Map<String, Boolean> isFavorite(@PathVariable Long id) {
-        Account account = accountService.getCurrentAccount();
+        Optional<Account> account = accountService.getCurrentAccount();
 
         Tour tour = tourService.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
-        boolean fav = favoriteService.isFavorite(account, tour);
+        boolean fav = favoriteService.isFavorite(account.orElse(null), tour);
 
         return Collections.singletonMap("isFavorite", fav);
     }
 
 //    ===================================================================
 
-    @PostMapping("/admin")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Tour> createTour(@RequestBody TourCreateRequestDto tourDto, Principal principal) {
-        Tour tour = tourService.create(tourDto, principal.getName());
-        return ResponseEntity.ok(tour);
+
+    public void updateEntityFromDto(Tour tour, TourCreateRequestDto dto) {
+        tour.setTitle(dto.getTitle());
+        tour.setDescription(dto.getDescription());
+        tour.setLocation(dto.getLocation());
+        tour.setImageUrl(dto.getImageUrl());
+        tour.setPrice(dto.getPrice());
+        tour.setMaxPeople(dto.getMaxPeople());
+        tour.setDuration(dto.getDuration());
+        tour.setDifficulty(dto.getDifficulty());
+        tour.setAvailability(dto.getAvailability());
+        tour.setType(dto.getType());
     }
 
+    public TourDto mapToDto(Tour tour) {
+        TourDto dto = new TourDto();
+
+        dto.setId(tour.getId());
+        dto.setTitle(tour.getTitle());
+        dto.setDescription(tour.getDescription());
+        dto.setPrice(tour.getPrice());
+
+        if (tour.getImageUrl() != null && !tour.getImageUrl().isBlank()) {
+            dto.setImageUrl(tour.getImageUrl());
+        } else if (!tour.getAlbum().isEmpty()) {
+            dto.setImageUrl(tour.getAlbum().get(0).getImageUrls());
+        } else {
+            dto.setImageUrl("https://via.placeholder.com/400x250");
+        }
+
+        dto.setRating(
+                tour.getAverageRating() != null
+                        ? BigDecimal.valueOf(tour.getAverageRating())
+                        : BigDecimal.ZERO
+        );
+
+        Optional<Discount> activeDiscount = tour.getDiscounts()
+                .stream()
+                .filter(d ->
+                        !d.getStartDate().isAfter(LocalDate.now()) &&
+                                !d.getEndDate().isBefore(LocalDate.now())
+                )
+                .findFirst();
+
+        if (activeDiscount.isPresent()) {
+            BigDecimal discountValue = activeDiscount.get().getValue();
+            BigDecimal discountPrice = tour.getPrice().subtract(
+                    tour.getPrice().multiply(discountValue).divide(BigDecimal.valueOf(100))
+            );
+            dto.setDiscountValue(discountValue);
+            dto.setDiscountPrice(discountPrice);
+        } else {
+            dto.setDiscountValue(BigDecimal.ZERO);
+            dto.setDiscountPrice(tour.getPrice());
+        }
+
+        return dto;
+    }
 
 }

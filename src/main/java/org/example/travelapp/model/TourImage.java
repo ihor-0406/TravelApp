@@ -1,5 +1,6 @@
 package org.example.travelapp.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,6 +18,10 @@ public class TourImage {
 
     private String imageUrls;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
+    @JoinColumn(name = "tour_id")
+    @JsonBackReference
     private Tour tour;
+
+
 }
