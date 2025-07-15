@@ -1,10 +1,10 @@
-// ✅ NavBar.jsx
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import logo from "../image/Logo.png";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
+import '../styles/Navbar.css'
 
 const NavBar = () => {
   const navigate = useNavigate();
@@ -12,20 +12,22 @@ const NavBar = () => {
   const [avatarUrl, setAvatarUrl] = useState(
     "https://cdn-icons-png.flaticon.com/512/149/149071.png"
   );
+const [role, setRole] = useState(null);
 
-  // При монтировании пытаемся получить профиль
   useEffect(() => {
-    axios
-      .get("/api/profile", { withCredentials: true })
-      .then((res) => {
-        setIsLoggedIn(true);
-        setAvatarUrl(res.data.avatarUrl || avatarUrl);
-      })
-      .catch(() => {
-        setIsLoggedIn(false);
-        setAvatarUrl("https://cdn-icons-png.flaticon.com/512/149/149071.png");
-      });
-  }, []);
+  axios
+    .get("/api/profile", { withCredentials: true })
+    .then((res) => {
+      setIsLoggedIn(true);
+      setAvatarUrl(res.data.avatarUrl || avatarUrl);
+      setRole(res.data.role); 
+    })
+    .catch(() => {
+      setIsLoggedIn(false);
+      setAvatarUrl("https://cdn-icons-png.flaticon.com/512/149/149071.png");
+      setRole(null); 
+    });
+}, []);
 
   const handleLogout = () => {
     axios
@@ -42,7 +44,7 @@ const NavBar = () => {
 
   return (
     <nav className="navbar navbar-expand-lg bg-transparent border-bottom ">
-      <div className="container-fluid mx-3 ">
+      <div className="container-fluid  ">
         <Link className="navbar-brand" to="/">
           <img src={logo} alt="logo" />
         </Link>
@@ -60,22 +62,22 @@ const NavBar = () => {
         <div className="collapse navbar-collapse " id="navbarNav">
           <ul className="navbar-nav mx-auto">
             <li className="nav-item ">
-              <Link className="nav-link active" to="/">
+              <Link className="nav-link active text-white" to="/">
                 Home
               </Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/tours">
+              <Link className="nav-link text-white" to="/tours">
                 Tours
               </Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="#">
+              <Link className="nav-link text-white" to="#">
                 Contact
               </Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="#">
+              <Link className="nav-link text-white" to="#">
                 About Us
               </Link>
             </li>
@@ -107,9 +109,11 @@ const NavBar = () => {
               </Link>
               <ul className="dropdown-menu dropdown-menu-end text-small">
                 <li>
-                  <Link className="dropdown-item" to="/profile">
-                    Profile
-                  </Link>
+                 {role === "ADMIN" ? (
+                  <Link className="dropdown-item" to="/admin">Admin Panel</Link>
+                ) : (
+                <Link className="dropdown-item" to="/profile">Profile</Link>
+                )}
                 </li>
                 <li>
                   <hr className="dropdown-divider" />

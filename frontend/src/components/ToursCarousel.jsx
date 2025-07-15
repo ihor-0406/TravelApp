@@ -1,40 +1,32 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation } from 'swiper/modules';
 import 'swiper/css';
-import 'swiper/css/navigation';
-
-import TourCard from './TourCard';
+import axios from 'axios';
 
 export default function ToursCarousel() {
   const [tours, setTours] = useState([]);
 
   useEffect(() => {
     axios.get('/api/tours')
-         .then(res => setTours(res.data))
-         .catch(console.error);
+      .then(res => {
+        const data = Array.isArray(res.data) ? res.data : res.data.content || [];
+        setTours(data);
+      })
+      .catch(err => {
+        console.error(err);
+        setTours([]); 
+      });
   }, []);
 
+  if (!Array.isArray(tours)) return <p>Ошибка загрузки туров</p>;
+
   return (
-    <section className="container py-3">
-      <Swiper
-        modules={[Navigation]} 
-        navigation        
-        spaceBetween={30}
-        breakpoints={{
-          320:  { slidesPerView: 1 },
-          768:  { slidesPerView: 2 },
-          1024: { slidesPerView: 3 },
-          1440: { slidesPerView: 4 },
-        }}
-      >
-        {tours.map(tour => (
-          <SwiperSlide key={tour.id}>
-            <TourCard tour={tour} />
-          </SwiperSlide>
-        ))}
-      </Swiper>
-    </section>
+    <Swiper slidesPerView={1} spaceBetween={10}>
+      {tours.map(tour => (
+        <SwiperSlide key={tour.id}>
+          <div>{tour.title}</div>
+        </SwiperSlide>
+      ))}
+    </Swiper>
   );
 }

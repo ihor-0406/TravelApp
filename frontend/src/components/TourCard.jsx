@@ -6,22 +6,20 @@ export default function TourCard({ tour }) {
   const [isFavorite, setIsFavorite] = useState(!!tour.isFavorite);
   const [loadingFav, setLoadingFav] = useState(false);
 
- useEffect(() => {
+  useEffect(() => {
     axios
       .get(`/api/tours/${tour.id}/favorite`, { withCredentials: true })
       .then(res => {
         setIsFavorite(res.data.isFavorite);
       })
-      .catch(() => {
-      });
-  }, [tour.id]); 
-
+      .catch(() => {});
+  }, [tour.id]);
 
   const addFavorite = () => {
     setLoadingFav(true);
     axios.post(`/api/tours/${tour.id}/favorite`, {}, { withCredentials: true })
       .then(() => setIsFavorite(true))
-      .catch(err => console.error( err))
+      .catch(err => console.error(err))
       .finally(() => setLoadingFav(false));
   };
 
@@ -29,7 +27,7 @@ export default function TourCard({ tour }) {
     setLoadingFav(true);
     axios.delete(`/api/tours/${tour.id}/favorite`, { withCredentials: true })
       .then(() => setIsFavorite(false))
-      .catch(err => console.error( err))
+      .catch(err => console.error(err))
       .finally(() => setLoadingFav(false));
   };
 
@@ -38,22 +36,31 @@ export default function TourCard({ tour }) {
     isFavorite ? removeFavorite() : addFavorite();
   };
 
-
   const duration = tour.duration || '3h';
   const availability = tour.availability || 'Year-round';
   const difficulty = tour.difficulty || 'Easy';
-  const price = tour.price?.toString() || '0';
+  const price = tour.price || 0;
+  const discountPrice = tour.discountPrice;
+  const discountValue = tour.discountValue;
   const rating = tour.rating ? tour.rating.toFixed(1) : '0.0';
+
+  const hasDiscount = discountValue > 0;
 
   return (
     <div className="card shadow rounded-4 overflow-hidden position-relative h-100">
+      {hasDiscount && (
+        <span className="badge bg-danger position-absolute top-0 start-0 m-2 px-3 py-2 fs-6">
+          -{Math.round(discountValue)}%
+        </span>
+      )}
+
       <button
         type="button"
         className="btn btn-light position-absolute top-0 end-0 m-2 rounded-circle p-2 d-flex align-items-center justify-content-center"
         onClick={handleFavoriteToggle}
         disabled={loadingFav}
         aria-label={isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}
-        style={{ width:  '2.5rem', height: '2.5rem' }}
+        style={{ width: '2.5rem', height: '2.5rem' }}
       >
         <i className={isFavorite ? 'fa-solid fa-heart text-danger' : 'fa-regular fa-heart text-danger'} />
       </button>
@@ -79,7 +86,14 @@ export default function TourCard({ tour }) {
           <span className="text-warning">
             <i className="fa-solid fa-star"></i> {rating}
           </span>
-          <strong>€{price}</strong>
+          {hasDiscount ? (
+            <div>
+              <span className="text-muted text-decoration-line-through me-1">€{price}</span>
+              <strong className="text-danger">€{discountPrice}</strong>
+            </div>
+          ) : (
+            <strong>€{price}</strong>
+          )}
         </div>
 
         <Link

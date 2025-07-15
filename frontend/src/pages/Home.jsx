@@ -13,13 +13,15 @@ const Home = () => {
     <>
     <header className='icelandBackgraund'>
       <NavBar/>
-      <div className='textFollow'>
+
+      <div className=' d-flex justify-content-center align-items-center flex-column'>
+        <div className='textFollow'>
         <p>Follow the - We`ll take care of the details</p>
       </div>
       <div className='btn-exploreTours'>
-        <Link to={'/tours'} className='btn'>Explore Tours</Link>
+        <Link to={'/tours'} className='btN'>Explore Tours</Link>
       </div>
-      <div className='btn-wrapper'>
+      <div className='btn-wrapper my-3'>
         <div className='circle1'>
           <div className='circle2'>
             <div className='circle3'>
@@ -28,49 +30,8 @@ const Home = () => {
           </div>
         </div>
       </div>
-{/* <div className="about-section">
-  <div className="about-text">
-    <div className="post-block">
-      <h2>Who We Are</h2>
-      <p>
-        We are a team of passionate explorers and travelers, deeply inspired<br />
-        by Iceland's unique nature and its enchanting, mystical atmosphere.<br />
-        We don't just offer tours – we guide you through the hidden wonders<br />
-        and untold stories of one of the most fascinating and otherworldly<br />
-        countries on Earth.
-      </p>
-    </div>
-    <div className="post-block">
-      <h2>Why Us</h2>
-      <p>
-        We turn Iceland trips into unforgettable adventures.<br />
-        With us, you won’t just see famous landmarks – you’ll feel the spirit<br />
-        of this magical land. We focus on every detail to make your<br />
-        experience seamless and truly memorable.
-      </p>
-    </div>
-    <div className="stats">
-      <div>
-        <h1>30+</h1>
-        <p>carefully crafted tour</p>
+      
       </div>
-      <div>
-        <h1>100+</h1>
-        <p>unforgettable location</p>
-      </div>
-      <div>
-        <h1>600+</h1>
-        <p>happy travelers this year</p>
-      </div>
-    </div>
-  </div>
-
-  <div className="about-images">
-    <img src={image1} alt="1" />
-    <img src={image2} alt="2" />
-    <img src={image3} alt="3" />
-  </div>
-</div> */}
     </header>
     <section className='section-info'>
       <div className="about-section">

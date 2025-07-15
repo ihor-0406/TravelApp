@@ -7,6 +7,7 @@ import ProfileInfo from '../components/ProfileInfo';
 import ProfileBookings from '../components/ProfileBookings';
 import ProfileFavorites from '../components/ProfileFavorites';
 import ProfileSettings from '../components/ProfileSettings';
+import '../styles/profile.css'
 
 export default function Profile() {
   const [profile, setProfile] = useState(null);
@@ -101,8 +102,12 @@ export default function Profile() {
   if (loading) return <div className="text-center p-4">Loading profile…</div>;
 
   return (
-    <div className="min-vh-100 bg-light">
+    <>
+    <header className='bgnProfile'>
       <NavBar />
+    </header>
+    <div className="min-vh-100 bg-light">
+      
       <div className="container py-4" style={{ maxWidth: 800 }}>
         <h1 className="mb-4">My Profile</h1>
 
@@ -126,5 +131,7 @@ export default function Profile() {
         )}
       </div>
     </div>
+    </>
+    
   );
 }

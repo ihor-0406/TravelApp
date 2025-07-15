@@ -9,6 +9,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar as solidStar } from '@fortawesome/free-solid-svg-icons';
 import { faStar as regularStar } from '@fortawesome/free-regular-svg-icons';
 import ReviewList from '../components/ReviewList';
+import BookingModal from '../components/BookingModal';
+import '../styles/Tour.css'
+import TourImageAlbum from '../components/TourImageAlbum';
 
 export default function TourDetails() {
   const { id } = useParams();
@@ -61,8 +64,11 @@ export default function TourDetails() {
   if (!tour) return <div className="text-center py-5">Loading tour...</div>;
 
   return (
+    <>
+    <header className='tourBackraund'>
+        <NavBar />
+      </header>
     <div>
-      <header><NavBar /></header>
       <h1 className="fw-bold mb-3">{tour.title}</h1>
       <p className="text-muted mb-2">{tour.description}</p>
       <div className="mb-3">{renderStars(tour.averageRating || 0)}</div>
@@ -120,6 +126,8 @@ export default function TourDetails() {
           </div>
         </div>
       </div>
+      
+      <TourImageAlbum tourId={id} />
 
       <ReviewList tourId={id} />
 
@@ -161,29 +169,18 @@ export default function TourDetails() {
         </div>
       )}
 
-      {/* MODAL */}
       {showModal && (
-        <div className="modal fade show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-          <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">Confirm Booking</h5>
-                <button type="button" className="btn-close" onClick={() => setShowModal(false)}></button>
-              </div>
-              <div className="modal-body">
-                <p><strong>Tour:</strong> {tour.title}</p>
-                <p><strong>Date:</strong> {date.toLocaleDateString()}</p>
-                <p><strong>People:</strong> {people}</p>
-                <p><strong>Total Price:</strong> €{(tour.price * people).toFixed(2)}</p>
-              </div>
-              <div className="modal-footer">
-                <button className="btn btn-secondary" onClick={() => setShowModal(false)}>Cancel</button>
-                <button className="btn btn-success">Confirm & Pay</button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <BookingModal
+          onClose={() => setShowModal(false)}
+          tourId={id}
+          tourTitle={tour.title}
+          date={date}
+          people={people}
+          userEmail={account.email}
+        />
       )}
     </div>
+    </>
+    
   );
 }

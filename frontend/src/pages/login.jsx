@@ -13,34 +13,43 @@ const Login = () => {
   const [error, setError] = useState('');
 
   const handleLogin = async (e) => {
-    e.preventDefault();
-    setError('');
+  e.preventDefault();
+  setError('');
 
-    if (!email || !password) {
-      setError('Please fill in all fields.');
-      return;
-    }
+  if (!email || !password) {
+    setError('Please fill in all fields.');
+    return;
+  }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      setError('Please enter a valid email.');
-      return;
-    }
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    setError('Please enter a valid email.');
+    return;
+  }
 
-    try {
-      const response = await axios.post(
-        'http://localhost:8080/api/auth/login',
-        { email, password }
-      );
+  try {
+    const response = await axios.post(
+      'http://localhost:8080/api/auth/login',
+      { email, password }
+    );
 
-      if (response.status === 200) {
+    if (response.status === 200) {
+      // Получаем текущего пользователя
+      const userRes = await axios.get('http://localhost:8080/api/profile');
+      const role = userRes.data?.role;
+
+      if (role === 'ADMIN') {
+        navigate('/admin');
+      } else {
         navigate('/profile');
       }
-    } catch (err) {
-      console.error('Login error:', err.response?.data || err.message);
-      setError('Invalid email or password');
     }
-  };
+  } catch (err) {
+    console.error('Login error:', err.response?.data || err.message);
+    setError('Invalid email or password');
+  }
+};
+
 
   return (
     <div className="login-wrapper">

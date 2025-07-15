@@ -1,45 +1,78 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route} from "react-router-dom";
-import Login from './pages/login.jsx';
+import React, { useEffect, useState } from "react";
+import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation,} from "react-router-dom";
+
+import Login from "./pages/login.jsx";
 import Profile from "./pages/profile.jsx";
 import Register from "./pages/register.jsx";
 import ResetPassword from "./pages/ResetPassword.jsx";
 import ForgotPassword from "./pages/ForgotPassword.jsx";
-import '@fortawesome/fontawesome-free/css/all.min.css';
-import  OAuthCallback  from "./pages/OAthCallback.jsx";
+import OAuthCallback from "./pages/OAthCallback.jsx";
 import Home from "./pages/Home.jsx";
 import Tours from "./pages/Tours.jsx";
 import TourDetails from "./pages/TourDetails.jsx";
-import './App.css';
+import Success from "./pages/Success.jsx";
+import Unauthorized from "./pages/Unauthorized.jsx";
+import AdminPanel from "./components/AdminPanel";
+import AdminRoute from "./context/AdminRoute";
 
+import axios from "axios";
+import "@fortawesome/fontawesome-free/css/all.min.css";
+import "./App.css";
 
-function App() {
+function AppRoutes({ account, isLoading }) {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (!isLoading && account && location.pathname === "/login") {
+      if (account.role === "ADMIN") {
+        navigate("/admin");
+      } else {
+        navigate("/profile");
+      }
+    }
+  }, [isLoading, account, location, navigate]);
+
   return (
-    <Router>
-      <Routes>
-
-        <Route>
-           <Route path="/login" element = {<Login/>} /> 
-           <Route path="/register" element = {<Register/>}/>
-           <Route path="/forgot-password" element = {<ForgotPassword/>} />
-           <Route path="reset-password" element ={<ResetPassword/>}/>
-        </Route>
-
-        {/* <Route path="/" element={<LayoutWithHeader />}> */}
-        <Route path="/" element={<Home/>}/>
-        <Route path="/tours" element={<Tours/>}/>
-        <Route path="/oauth2/callback" element={<OAuthCallback />} />
-        <Route path="reset-password" element ={<ResetPassword/>}/>
-        <Route path="/profile" element={<Profile />}/>
-        <Route path="/tours/:id" element={<TourDetails />} />
-
-      </Routes>
-    </Router>
-
-  
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
+      <Route path="/oauth2/callback" element={<OAuthCallback />} />
+      <Route path="/profile" element={<Profile />} />
+      <Route path="/tours" element={<Tours />} />
+      <Route path="/tours/:id" element={<TourDetails />} />
+      <Route path="/success" element={<Success />} />
+      <Route path="/unauthorized" element={<Unauthorized />} />
+      <Route
+        path="/admin"
+        element={
+          <AdminRoute account={account} isLoading={isLoading}>
+            <AdminPanel />
+          </AdminRoute>
+        }
+      />
+    </Routes>
   );
 }
 
+export default function App() {
+  const [account, setAccount] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-export default App;
+  useEffect(() => {
+    axios
+      .get("/api/profile", { withCredentials: true })
+      .then((res) => setAccount(res.data))
+      .catch(() => setAccount(null))
+      .finally(() => setIsLoading(false));
+  }, []);
 
+  return (
+    <Router>
+      <AppRoutes account={account} isLoading={isLoading} />
+    </Router>
+  );
+}
