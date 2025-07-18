@@ -1,4 +1,3 @@
-// components/AdminTabs.jsx
 import React from 'react';
 
 export default function AdminTabs({ activeTab, setActiveTab }) {

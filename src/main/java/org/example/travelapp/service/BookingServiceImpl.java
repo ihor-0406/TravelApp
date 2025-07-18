@@ -35,56 +35,40 @@ public class BookingServiceImpl implements BookingService {
     @Value("${stripe.secret.key}")
     private String stripeSecretKey;
 
-//    @Override
-//    public BookingDto createBooking(BookingDto bookingDto) {
-//        Booking booking = new Booking();
-//
-//        booking.setBookingDate(bookingDto.getBookingDate());
-//        booking.setNumberOfPeople(bookingDto.getNumberOfPeople());
-//        booking.setStatus(bookingDto.getStatus());
-//
-//        Account account = getCurrentAccount();
-//        Tour tour = tourRepository.findById(bookingDto.getTourId())
-//                .orElseThrow(() -> new RuntimeException("Tour not found with id: " + bookingDto.getTourId()));
-//        booking.setAccount(account);
-//        booking.setTour(tour);
-//
-//        return mapToDto(bookingRepository.save(booking));
-//    }
-@Override
-public BookingDto createBookingWithPayment(BookingDto bookingDto, String paymentIntentId) {
-    Stripe.apiKey = stripeSecretKey;
+    @Override
+    public BookingDto createBookingWithPayment(BookingDto bookingDto, String paymentIntentId) {
+        Stripe.apiKey = stripeSecretKey;
 
-    try {
-        PaymentIntent paymentIntent = PaymentIntent.retrieve(paymentIntentId);
-        if (!"succeeded".equals(paymentIntent.getStatus())) {
-            throw new RuntimeException("Payment not successful");
+        try {
+            PaymentIntent paymentIntent = PaymentIntent.retrieve(paymentIntentId);
+            if (!"succeeded".equals(paymentIntent.getStatus())) {
+                throw new RuntimeException("Payment not successful");
+            }
+
+            Booking booking = new Booking();
+            booking.setBookingDate(bookingDto.getBookingDate());
+            booking.setNumberOfPeople(bookingDto.getNumberOfPeople());
+            booking.setStatus(BookingStatus.PENDING);
+
+            Account account = getCurrentAccount();
+            Tour tour = tourRepository.findById(bookingDto.getTourId())
+                    .orElseThrow(() -> new RuntimeException("Tour not found with id: " + bookingDto.getTourId()));
+            booking.setAccount(account);
+            booking.setTour(tour);
+
+            Payment payment = new Payment();
+            payment.setStripeSessionId(paymentIntentId);
+            payment.setStatus(PaymentStatus.PENDING);
+            payment.setPaymentDateTime(LocalDateTime.now());
+            payment.setAccount(account);
+            payment = paymentRepository.save(payment);
+            booking.setPayment(payment);
+
+            return mapToDto(bookingRepository.save(booking));
+        } catch (StripeException e) {
+            throw new RuntimeException("Stripe payment verification failed: " + e.getMessage(), e);
         }
-
-        Booking booking = new Booking();
-        booking.setBookingDate(bookingDto.getBookingDate());
-        booking.setNumberOfPeople(bookingDto.getNumberOfPeople());
-        booking.setStatus(BookingStatus.PENDING);
-
-        Account account = getCurrentAccount();
-        Tour tour = tourRepository.findById(bookingDto.getTourId())
-                .orElseThrow(() -> new RuntimeException("Tour not found with id: " + bookingDto.getTourId()));
-        booking.setAccount(account);
-        booking.setTour(tour);
-
-        Payment payment = new Payment();
-        payment.setStripeSessionId(paymentIntentId);
-        payment.setStatus(PaymentStatus.PENDING);
-        payment.setPaymentDateTime(LocalDateTime.now());
-        payment.setAccount(account);
-        payment = paymentRepository.save(payment);
-        booking.setPayment(payment);
-
-        return mapToDto(bookingRepository.save(booking));
-    } catch (StripeException e) {
-        throw new RuntimeException("Stripe payment verification failed: " + e.getMessage(), e);
     }
-}
     @Override
     public void createBookingAfterPayment(String email, Long tourId, int adults, Payment payment) {
         Account account = accountRepository.findByEmail(email)

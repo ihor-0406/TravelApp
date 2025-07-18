@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation,} from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import Login from "./pages/login.jsx";
 import Profile from "./pages/profile.jsx";
@@ -13,26 +13,12 @@ import TourDetails from "./pages/TourDetails.jsx";
 import Success from "./pages/Success.jsx";
 import Unauthorized from "./pages/Unauthorized.jsx";
 import AdminPanel from "./components/AdminPanel";
-import AdminRoute from "./context/AdminRoute";
 
 import axios from "axios";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "./App.css";
 
-function AppRoutes({ account, isLoading }) {
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  useEffect(() => {
-    if (!isLoading && account && location.pathname === "/login") {
-      if (account.role === "ADMIN") {
-        navigate("/admin");
-      } else {
-        navigate("/profile");
-      }
-    }
-  }, [isLoading, account, location, navigate]);
-
+function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
@@ -46,14 +32,7 @@ function AppRoutes({ account, isLoading }) {
       <Route path="/tours/:id" element={<TourDetails />} />
       <Route path="/success" element={<Success />} />
       <Route path="/unauthorized" element={<Unauthorized />} />
-      <Route
-        path="/admin"
-        element={
-          <AdminRoute account={account} isLoading={isLoading}>
-            <AdminPanel />
-          </AdminRoute>
-        }
-      />
+      <Route path="/admin" element={<AdminPanel />} />
     </Routes>
   );
 }
@@ -72,7 +51,7 @@ export default function App() {
 
   return (
     <Router>
-      <AppRoutes account={account} isLoading={isLoading} />
+      <AppRoutes />
     </Router>
   );
 }

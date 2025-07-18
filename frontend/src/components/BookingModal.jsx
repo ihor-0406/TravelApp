@@ -15,29 +15,38 @@ export default function BookingModal({ onClose, tourId, tourTitle, date, people,
   }, [tourId]);
 
   const handleBookAndPay = async () => {
-    setSubmitting(true);
-    try {
-      const res = await axios.post('/api/payment/create-checkout-session', {
-        tourId: parseInt(tourId, 10),
-        tourTitle,
-        adults: count,
-        email: userEmail,
-      }, { withCredentials: true });
+  if (!userEmail) {
+    window.location.href = '/login';
+    return;
+  }
 
-      if (res.data.url) {
-        window.location.href = res.data.url; // Просто редирект без sessionStorage
-      } else {
-        console.error("❌ No checkout session URL received");
-      }
-    } catch (err) {
-      console.error("❌ Failed to create checkout session", err);
-    } finally {
-      setSubmitting(false);
+  setSubmitting(true);
+  try {
+    const res = await axios.post('/api/payment/create-checkout-session', {
+      tourId: parseInt(tourId, 10),
+      tourTitle,
+      adults: count,
+      email: userEmail,
+    }, { withCredentials: true });
+
+    if (res.data.url) {
+      window.location.href = res.data.url;
+    } else {
+      console.error("No checkout session URL received");
     }
-  };
+  } catch (err) {
+    console.error( err);
+  } finally {
+    setSubmitting(false);
+  }
+};
 
-  const price = tour?.price || 0;
+
+  const price = tour?.discountPrice ?? tour?.price ?? 0;
+  const basePrice = tour?.price ?? 0;
+  const isDiscounted = tour?.discountPrice !== null && tour?.discountPrice !== undefined;
   const totalPrice = (price * count).toFixed(2);
+
 
   return (
     <div className="position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-75 d-flex justify-content-center align-items-center" style={{ zIndex: 1050 }}>
@@ -53,48 +62,61 @@ export default function BookingModal({ onClose, tourId, tourTitle, date, people,
 
         <div className="mb-3">
           <label className="form-label fw-semibold">Pick a time</label>
-          <div className="d-flex gap-3">
-            {['10:00', '12:00'].map(time => (
-              <button
-                key={time}
-                className={`btn ${selectedTime === time ? 'btn-success text-white' : 'btn-outline-secondary'}`}
-                onClick={() => setSelectedTime(time)}
-                type="button"
-              >
-                {time}
-              </button>
-            ))}
-          </div>
+         <div className="d-flex gap-3 flex-wrap">
+          {['08:00', '10:00', '12:00', '14:00', '16:00'].map(time => (
+            <button
+              key={time}
+              className={`btn ${selectedTime === time ? 'btn-success text-white' : 'btn-outline-secondary'}`}
+              onClick={() => setSelectedTime(time)}
+              type="button"
+            >
+              {time}
+            </button>
+          ))}
+        </div>
+
         </div>
 
         <div className="mb-3">
           <label className="form-label fw-semibold">Participants</label>
           <div className="d-flex align-items-center">
-            <button type="button" className="btn btn-outline-secondary btn-sm" onClick={() => setCount(p => Math.max(1, p - 1))}>-</button>
+            <button type="button" className="btn btn-outline-success btn-sm rounded-circle" onClick={() => setCount(p => Math.max(1, p - 1))}>-</button>
             <span className="mx-2">{count}</span>
-            <button type="button" className="btn btn-outline-secondary btn-sm" onClick={() => setCount(p => p + 1)}>+</button>
+            <button type="button" className="btn btn-outline-success rounded-circle btn-sm" onClick={() => setCount(p => p + 1)}>+</button>
           </div>
         </div>
 
         <div className="mb-3">
           <label className="form-label fw-semibold">Pick Up</label>
-          <select className="form-select" value={pickup} onChange={e => setPickup(e.target.value)}>
-            <option value="">Selected Option</option>
-            <option value="Reykjavik">Reykjavik</option>
-            <option value="Keflavik">Keflavik</option>
-          </select>
+         <select className="form-select" value={pickup} onChange={e => setPickup(e.target.value)}>
+          <option value="">Selected Option</option>
+          <option value="Reykjavik">Reykjavik</option>
+          <option value="Keflavik">Keflavik</option>
+          <option value="Akureyri">Akureyri</option>
+          <option value="Hvolsvöllur">Hvolsvöllur</option>
+          <option value="Selfoss">Selfoss</option>
+          <option value="Hella">Hella</option>
+          <option value="Vík í Mýrdal">Vík í Mýrdal</option>
+        </select>
+
         </div>
 
         <div className="border-top pt-3 mb-3">
-          <div className="d-flex justify-content-between">
-            <span>Price breakdown</span>
-            <span>$ {price} x {count}</span>
-          </div>
-          <div className="d-flex justify-content-between fw-bold">
-            <span>Total price</span>
-            <span>$ {totalPrice}</span>
-          </div>
+        <div className="d-flex justify-content-between">
+          <span>Price breakdown</span>
+          <span>
+            {isDiscounted && (
+              <del className="text-muted me-2">${basePrice}</del>
+            )}
+            <strong>${price}</strong> x {count}
+          </span>
         </div>
+        <div className="d-flex justify-content-between fw-bold">
+          <span>Total price</span>
+          <span>${totalPrice}</span>
+        </div>
+      </div>
+
 
         <button
           type="button"

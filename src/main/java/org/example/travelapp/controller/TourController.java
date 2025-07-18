@@ -68,11 +68,12 @@ public class TourController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Tour> getTourById(@PathVariable Long id) {
+    public ResponseEntity<TourDto> getTourById(@PathVariable Long id) {
         return tourService.findById(id)
-                .map(ResponseEntity :: ok)
+                .map(tour -> ResponseEntity.ok(mapToDto(tour)))
                 .orElse(ResponseEntity.notFound().build());
     }
+
 
     @GetMapping("/{id}/images")
     public ResponseEntity<List<TourImage>> getTourImages(@PathVariable Long id) {
@@ -209,8 +210,12 @@ public class TourController {
         TourDto dto = new TourDto();
 
         dto.setId(tour.getId());
+        dto.setLocation(tour.getLocation());
         dto.setTitle(tour.getTitle());
         dto.setDescription(tour.getDescription());
+        dto.setDuration(tour.getDuration());
+        dto.setAvailability(String.valueOf(tour.getAvailability()));
+        dto.setDifficulty(tour.getDifficulty().name());
         dto.setPrice(tour.getPrice());
 
         if (tour.getImageUrl() != null && !tour.getImageUrl().isBlank()) {
@@ -218,7 +223,7 @@ public class TourController {
         } else if (!tour.getAlbum().isEmpty()) {
             dto.setImageUrl(tour.getAlbum().get(0).getImageUrls());
         } else {
-            dto.setImageUrl("https://via.placeholder.com/400x250");
+            dto.setImageUrl("https://www.svgrepo.com/show/452030/avatar-default.svg");
         }
 
         dto.setRating(

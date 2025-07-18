@@ -1,0 +1,22 @@
+.blog-card {
+  height: 300px;
+  background-size: cover;
+  background-position: center;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.blog-card:hover {
+  transform: scale(1.02);
+}
+
+.blog-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.6), rgba(0,0,0,0));
+  z-index: 1;
+}
+
+.blog-content {
+  z-index: 2;
+}

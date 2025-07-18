@@ -76,7 +76,6 @@ public class AccountService {
             throw new IllegalArgumentException("Empty avatar file");
         }
         try {
-            // Преобразуем uploadDir в абсолютный путь относительно корня проекта
             Path dirPath = Paths.get(uploadDir).toAbsolutePath();
             if (!Files.exists(dirPath)) {
                 Files.createDirectories(dirPath);
@@ -87,7 +86,7 @@ public class AccountService {
             Path target = dirPath.resolve(filename);
             file.transferTo(target.toFile());
 
-            // Возвращаем относительный путь для использования в веб-контексте
+
             return "/uploads/avatars/" + filename;
         } catch (IOException e) {
             throw new RuntimeException("Failed to store avatar file", e);

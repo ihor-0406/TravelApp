@@ -1,7 +1,7 @@
 .bgnProfile{
     position: relative;
   width: 100vw;
-  height: 450px;
+  height: 350px;
   background-image: url('../image/profile.jpg');
   background-size: cover;
   background-position: center bottom;

@@ -2,20 +2,21 @@
   position: relative;
   width: 100vw;
   height: 150vh;
-  background-image: url('../image/bgn.jpg');
+  background-image:
+    linear-gradient(to top, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0)), 
+    url('../image/bgn.jpg');
   background-size: cover;
   /* background-position: center; */
   background-repeat: no-repeat;
-  filter: brightness(80%);
   
 }
 .section-info{
-   background-image: url('../image/bgn1.jpg');
+   background-image:
+    linear-gradient(to top,transparent, rgba(0, 0, 0, 0.636)),
+     url('../image/bgn1.jpg');
   background-size: cover;
   background-position: bottom center;
   background-repeat: no-repeat;
-  filter: brightness(80%);
-  
 }
 section{
   background: rgb(217, 217, 217);
@@ -41,7 +42,7 @@ section{
   background: transparent;
   border: 2px solid white;
   color: white;
-  
+   text-decoration: none;
 }
 .btN:hover{
   background-color: white;
@@ -83,6 +84,16 @@ section{
   font-size: 1rem;
   
   
+}
+.bgr-contacts{
+  background-image:
+    linear-gradient(to top,transparent, rgba(0, 0, 0, 0.748)),
+     url('../image/countact.jpg');
+  background-size: cover;
+  background-position:  center;
+  background-repeat: no-repeat;
+  min-height: 250px;
+  color: white;
 }
 
 @keyframes pulse {
@@ -133,6 +144,7 @@ section{
   grid-template-rows: auto auto;
   gap: 20px;
   align-items: stretch;
+  
 }
 .about-images img:nth-child(1) {
   grid-column: 1 / 2;

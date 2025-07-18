@@ -3,7 +3,7 @@ import React from 'react';
 export default function ProfileTabs({ activeTab, setActiveTab }) {
   const tabs = ['profile', 'bookings', 'favorites', 'settings'];
   return (
-    <ul className="nav nav-tabs mb-4">
+    <ul className="nav nav-tabs mb-4 tex">
       {tabs.map(tab => (
         <li className="nav-item" key={tab}>
           <button

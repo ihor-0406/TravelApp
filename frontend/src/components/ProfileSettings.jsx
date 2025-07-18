@@ -5,13 +5,13 @@ export default function ProfileSettings({ profile, formData, handleChange, handl
     <div className="card p-4">
       <div className="d-flex align-items-center mb-4">
         <img
-          src={profile.avatarUrl || 'https://via.placeholder.com/100'}
+          src={profile.avatarUrl }
           alt="avatar"
           className="rounded-circle me-3"
           style={{ width: 100, height: 100, objectFit: 'cover' }}
         />
         <div>
-          <label className="form-label">Change Avatar</label>
+          <label className="form-label inter-medium ">Change Avatar</label>
           <input
             type="file"
             accept="image/*"
@@ -19,7 +19,7 @@ export default function ProfileSettings({ profile, formData, handleChange, handl
             onChange={handleAvatarSelect}
           />
           <button
-            className="btn btn-secondary btn-sm"
+            className="btn btn-secondary rounded-pill px-4 my-2 btn-sm"
             onClick={handleAvatarUpload}
             disabled={uploading}
           >
@@ -35,7 +35,7 @@ export default function ProfileSettings({ profile, formData, handleChange, handl
         { label: 'Birth Date', name: 'dateOfBirth', type: 'date' }
       ].map(({ label, name, type }) => (
         <div className="mb-3" key={name}>
-          <label className="form-label">{label}</label>
+          <label className="form-label inter-medium ">{label}</label>
           <input
             name={name}
             type={type || 'text'}
@@ -47,10 +47,10 @@ export default function ProfileSettings({ profile, formData, handleChange, handl
       ))}
 
       <div className="mb-3">
-        <label className="form-label">Gender</label>
+        <label className="form-label inter-medium ">Gender</label>
         <select
           name="gender"
-          className="form-select"
+          className="form-select inter-small "
           value={formData.gender || ''}
           onChange={handleChange}
         >
@@ -61,7 +61,7 @@ export default function ProfileSettings({ profile, formData, handleChange, handl
         </select>
       </div>
 
-      <h5 className="mt-4">Address</h5>
+      <h5 className="mt-4 inter-medium ">Address</h5>
       {['street', 'city', 'postalCode', 'country'].map(field => (
         <div className="mb-3" key={field}>
           <label className="form-label">{field === 'postalCode' ? 'Postal Code' : field.charAt(0).toUpperCase() + field.slice(1)}</label>
@@ -73,9 +73,8 @@ export default function ProfileSettings({ profile, formData, handleChange, handl
           />
         </div>
       ))}
-
       <button
-        className="btn btn-primary mt-3"
+        className="btn btn-outline-dark rounded-pill px-5 mt-3 inter-medium "
         onClick={handleSave}
         disabled={saving}
       >

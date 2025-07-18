@@ -71,7 +71,15 @@ public class ReviewService {
                             dto.setComment(review.getComment());
                             dto.setRating(review.getRating());
                             dto.setDate(review.getReviewDate());
-                            dto.setMine(review.getAccount().getId().equals(account.getId()));
+                            dto.setMine(account != null && review.getAccount().getId().equals(account.getId()));
+
+                            Account reviewer = review.getAccount();
+                            dto.setFirstName(reviewer.getFirstName());
+                            dto.setLastName(reviewer.getLastName());
+                            dto.setAvatarUrl(reviewer.getAvatarUrl());
+                            dto.setCity(reviewer.getAddress() != null ? reviewer.getAddress().getCity() : "Unknown");
+
+
                             return dto;
                         }).toList();
 
@@ -120,8 +128,15 @@ public class ReviewService {
         dto.setId(review.getId());
         dto.setComment(review.getComment());
         dto.setRating(review.getRating());
-        dto.setLastName(review.getAccount().getLastName());
         dto.setDate(review.getReviewDate());
+
+        Account reviewer = review.getAccount();
+        dto.setFirstName(reviewer.getFirstName());
+        dto.setLastName(reviewer.getLastName());
+        dto.setAvatarUrl(reviewer.getAvatarUrl());
+        dto.setCity(reviewer.getAddress() != null ? reviewer.getAddress().getCity() : "Unknown");
+
+
         return dto;
     }
 

@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import NavBar from '../components/NavBar';
-import TourCard from '../components/TourCard';
 import ProfileTabs from '../components/ProfileTabs';
 import ProfileInfo from '../components/ProfileInfo';
 import ProfileBookings from '../components/ProfileBookings';
 import ProfileFavorites from '../components/ProfileFavorites';
 import ProfileSettings from '../components/ProfileSettings';
-import '../styles/profile.css'
+import '../styles/profile.css';
+import Footer from '../components/Footer';
 
 export default function Profile() {
   const [profile, setProfile] = useState(null);
@@ -19,16 +20,23 @@ export default function Profile() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     axios.get('/api/profile', { withCredentials: true })
       .then(res => {
         setProfile(res.data);
         setFormData(res.data);
+        if (window.location.pathname === '/admin' && res.data.role !== 'ADMIN') {
+          navigate('/unauthorized');
+        }
       })
-      .catch(() => alert('Failed to load profile'))
+      .catch(() => {
+        alert('Failed to load profile');
+        navigate('/unauthorized');
+      })
       .finally(() => setLoading(false));
-  }, []);
+  }, [navigate]);
 
   useEffect(() => {
     const fetchTabData = async () => {
@@ -47,6 +55,11 @@ export default function Profile() {
 
     fetchTabData();
   }, [activeTab]);
+
+   useEffect(() => {
+          document.title = 'Profile | Travellins';
+      }, []);
+  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -67,9 +80,9 @@ export default function Profile() {
       const res = await axios.put('/api/profile', formData, { withCredentials: true });
       setProfile(res.data);
       setFormData(res.data);
-      alert('Profile updated');
+      alert('Profile updated successfully');
     } catch {
-      alert('Failed to save profile');
+      alert('Failed to update profile');
     } finally {
       setSaving(false);
     }
@@ -80,7 +93,7 @@ export default function Profile() {
   };
 
   const handleAvatarUpload = async () => {
-    if (!avatarFile) return alert('Please select an avatar image');
+    if (!avatarFile) return alert('Please select an avatar');
     setUploading(true);
     const data = new FormData();
     data.append('file', avatarFile);
@@ -98,40 +111,48 @@ export default function Profile() {
       setUploading(false);
     }
   };
+  const handleDeleteBooking = (id) => {
+    axios.delete(`/api/bookings/${id}`, { withCredentials: true })
+      .then(() => {
+        setBookings((prev) => prev.filter((b) => b.id !== id));
+      })
+      .catch(err => {
+        console.error( err);
+      });
+  };
 
-  if (loading) return <div className="text-center p-4">Loading profile…</div>;
+  if (loading) return <div class="spinner-border" role="status"> <span class="visually-hidden">Loading...</span> </div>
 
   return (
     <>
-    <header className='bgnProfile'>
-      <NavBar />
-    </header>
-    <div className="min-vh-100 bg-light">
-      
-      <div className="container py-4" style={{ maxWidth: 800 }}>
-        <h1 className="mb-4">My Profile</h1>
+      <header className='bgnProfile'>
+        <NavBar />
+      </header>
+      <div className="min-vh-100 bg-light">
+        <div className="container py-4" style={{ maxWidth: 800 }}>
+          <h1 className="mb-4 paytone-one-regular">My Profile</h1>
+          <ProfileTabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
-        <ProfileTabs activeTab={activeTab} setActiveTab={setActiveTab} />
-
-        {activeTab === 'profile' && <ProfileInfo profile={profile} />}
-        {activeTab === 'bookings' && <ProfileBookings bookings={bookings} />}
-        {activeTab === 'favorites' && <ProfileFavorites favorites={favorites} />}
-        {activeTab === 'settings' && (
-          <ProfileSettings
-            profile={profile}
-            formData={formData}
-            onChange={handleChange}
-            onSave={handleSave}
-            saving={saving}
-            avatarFile={avatarFile}
-            onAvatarSelect={handleAvatarSelect}
-            onAvatarUpload={handleAvatarUpload}
-            uploading={uploading}
-          />
-        )}
+          {activeTab === 'profile' && <ProfileInfo profile={profile} />}
+          {activeTab === 'bookings' && <ProfileBookings bookings={bookings}   onDelete={handleDeleteBooking} />}
+          {activeTab === 'favorites' && <ProfileFavorites favorites={favorites} />}
+          {activeTab === 'settings' && (
+            <ProfileSettings
+              profile={profile}
+              formData={formData}
+              handleChange={handleChange}
+              handleSave={handleSave}
+              saving={saving}
+              handleAvatarSelect={handleAvatarSelect}
+              handleAvatarUpload={handleAvatarUpload}
+              uploading={uploading}
+            />
+          )}
+        </div>
       </div>
-    </div>
+      <footer>
+        <Footer/>
+      </footer>
     </>
-    
   );
 }

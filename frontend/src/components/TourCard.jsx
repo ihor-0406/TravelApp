@@ -36,7 +36,7 @@ export default function TourCard({ tour }) {
     isFavorite ? removeFavorite() : addFavorite();
   };
 
-  const duration = tour.duration || '3h';
+  const duration = tour.duration || '2.5h';
   const availability = tour.availability || 'Year-round';
   const difficulty = tour.difficulty || 'Easy';
   const price = tour.price || 0;
@@ -47,9 +47,9 @@ export default function TourCard({ tour }) {
   const hasDiscount = discountValue > 0;
 
   return (
-    <div className="card shadow rounded-4 overflow-hidden position-relative h-100">
+    <div className="card shadow rounded-4  overflow-hidden position-relative h-100">
       {hasDiscount && (
-        <span className="badge bg-danger position-absolute top-0 start-0 m-2 px-3 py-2 fs-6">
+        <span className="badge bg-danger rounded-pill position-absolute top-0 start-0 m-2 px-3 py-2 fs-6">
           -{Math.round(discountValue)}%
         </span>
       )}
@@ -66,24 +66,24 @@ export default function TourCard({ tour }) {
       </button>
 
       <img
-        src={tour.imageUrl || 'https://via.placeholder.com/400x250'}
+        src={tour.imageUrl || 'https://as2.ftcdn.net/v2/jpg/03/31/69/91/1000_F_331699188_lRpvqxO5QRtwOM05gR50ImaaJgBx68vi.jpg'}
         className="card-img-top"
         alt={tour.title || 'Tour Image'}
         style={{ objectFit: 'cover', aspectRatio: '4/3' }}
       />
 
       <div className="card-body d-flex flex-column">
-        <h5 className="card-title fw-bold">{tour.title || 'Untitled Tour'}</h5>
-        <p className="text-muted small">{tour.location || 'Unknown Location'}</p>
+        <h5 className="card-title paytone-one-regular">{tour.title || 'Untitled Tour'}</h5>
+        <p className="text-muted small inter-small">{tour.location || 'Unknown Location'}</p>
 
-        <div className="d-flex flex-wrap gap-2 text-muted small mb-2">
-          <span><i className="fa-regular fa-clock"></i> {duration}</span>
+        <div className="d-flex flex-wrap gap-3 text-muted small mb-2 inter-small">
+          <span><i className="fa-regular fa-clock "></i> {duration}</span>
           <span><i className="fa-regular fa-calendar-days"></i> {availability}</span>
-          <span><i className="fa-solid fa-signal"></i> {difficulty}</span>
+          <span><i className="fa-solid fa-gauge"></i> {difficulty}</span>
         </div>
 
         <div className="d-flex justify-content-between align-items-center mt-auto">
-          <span className="text-warning">
+          <span className="text-warning ">
             <i className="fa-solid fa-star"></i> {rating}
           </span>
           {hasDiscount ? (

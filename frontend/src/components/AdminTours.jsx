@@ -37,14 +37,14 @@ export default function AdminTours() {
           : [];
 
         if (!Array.isArray(toursArray)) {
-          console.warn("Неправильный формат данных:", data);
+          console.warn( data);
           setTours([]);
         } else {
           setTours(toursArray);
         }
       })
       .catch(err => {
-        console.error("Ошибка загрузки туров:", err);
+        console.error( err);
         setTours([]);
       });
   };
@@ -68,7 +68,7 @@ export default function AdminTours() {
     if (!window.confirm('Are you sure you want to delete this tour?')) return;
     axios.delete(`/api/tours/admin/${id}`)
       .then(fetchTours)
-      .catch(err => console.error('Ошибка при удалении:', err));
+      .catch(err => console.error( err));
   };
 
   const handleSubmit = (e) => {
@@ -135,7 +135,7 @@ export default function AdminTours() {
   return (
     <div className="container my-4">
       <div className="bg-light p-4 rounded shadow-sm mb-4">
-        <h4>{editId ? 'Edit Tour' : 'Create New Tour'}</h4>
+        <h4 >{editId ? 'Edit Tour' : 'Create New Tour'}</h4>
         <form onSubmit={handleSubmit} className="row g-2">
           <div className="col-md-4">
             <input type="text" placeholder="Title" className="form-control" value={formData.title}
@@ -203,7 +203,7 @@ export default function AdminTours() {
         </form>
       </div>
 
-      <h5 className="mb-3">All Tours</h5>
+      <h5 className="mb-3 inter-medium ">All Tours</h5>
       <table className="table table-bordered table-hover">
         <thead className="table-light">
           <tr>
@@ -231,10 +231,10 @@ export default function AdminTours() {
                 <td>{t.duration}</td>
                 <td>{t.location}</td>
                 <td className="text-end">
-                  <button className="btn btn-sm btn-warning me-2" onClick={() => handleEdit(t)}>
+                  <button className="btn btn-sm btn-warning me-2 rounded-circle" onClick={() => handleEdit(t)}>
                     <FontAwesomeIcon icon={faEdit} />
                   </button>
-                  <button className="btn btn-sm btn-danger" onClick={() => handleDelete(t.id)}>
+                  <button className="btn btn-sm btn-danger rounded-circle me-2" onClick={() => handleDelete(t.id)}>
                     <FontAwesomeIcon icon={faTrash} />
                   </button>
                 </td>

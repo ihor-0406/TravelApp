@@ -37,6 +37,10 @@ public class StripeController {
     @Value("${stripe.webhook.secret}")
     private String endpointSecret;
 
+    @Value("${frontend.url}")
+    private String frontendUrl;
+
+
 
     @PostMapping("/create-checkout-session")
     public ResponseEntity<Map<String, String>> createCheckoutSession(@RequestBody Map<String, Object> payload) {
@@ -90,10 +94,11 @@ public class StripeController {
                             .setQuantity(Long.valueOf(adults))
                             .build();
 
+
             SessionCreateParams params = SessionCreateParams.builder()
                     .setMode(SessionCreateParams.Mode.PAYMENT)
-                    .setSuccessUrl("http://localhost:3000/success?session_id={CHECKOUT_SESSION_ID}")
-                    .setCancelUrl("http://localhost:3000/payment/cancel")
+                    .setSuccessUrl(frontendUrl + "/success?session_id={CHECKOUT_SESSION_ID}")
+                    .setCancelUrl(frontendUrl + "/payment/cancel")
                     .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
                     .addLineItem(lineItem)
                     .putMetadata("tourId", tourId.toString())
@@ -151,7 +156,7 @@ public class StripeController {
                             .getObject()
                             .orElseThrow(() -> new RuntimeException("No session object"));
 
-                    System.out.println("✅ Session received: " + session.toJson());
+                    System.out.println("Session received: " + session.toJson());
 
                     String email = session.getMetadata().get("email");
                     String tourIdStr = session.getMetadata().get("tourId");

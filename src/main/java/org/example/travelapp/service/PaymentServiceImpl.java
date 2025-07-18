@@ -35,10 +35,10 @@ public class PaymentServiceImpl implements PaymentService {
             payment.setStatus(PaymentStatus.PENDING);
         } else {
             log.warn("Payment status is null or empty for session: {}", session.getId());
-            payment.setStatus(PaymentStatus.PENDING); // Значение по умолчанию
+            payment.setStatus(PaymentStatus.PENDING);
         }
 
-        // Обработка метаданных
+        // Обработка данных
         if (session.getMetadata() != null) {
             String email = session.getMetadata().get("email");
             if (email != null) {

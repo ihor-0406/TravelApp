@@ -18,9 +18,14 @@ public class Tour {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(length = 1000)
     private String title;
+
+    @Column(length = 1000)
     private String description;
     private String location;
+
+    @Column(length = 1000)
     private String imageUrl;
 
     private BigDecimal price;

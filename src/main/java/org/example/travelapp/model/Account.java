@@ -1,6 +1,8 @@
 package org.example.travelapp.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,6 +28,11 @@ public class Account {
     private String phone;
 
     @Column(nullable = false)
+//    @Size(min = 8, message = "Password must be at least 8 characters long")
+//    @Pattern(
+//            regexp = "^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]).+$",
+//            message = "Password must contain at least one uppercase letter, one number, and one special character"
+//    )
     private String passwordHash;
 
     private String firstName;

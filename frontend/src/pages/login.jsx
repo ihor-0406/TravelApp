@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import '../styles/login.css';
@@ -29,13 +29,12 @@ const Login = () => {
 
   try {
     const response = await axios.post(
-      'http://localhost:8080/api/auth/login',
+      '/api/auth/login',
       { email, password }
     );
 
     if (response.status === 200) {
-      // Получаем текущего пользователя
-      const userRes = await axios.get('http://localhost:8080/api/profile');
+      const userRes = await axios.get('/api/profile');
       const role = userRes.data?.role;
 
       if (role === 'ADMIN') {
@@ -50,6 +49,10 @@ const Login = () => {
   }
 };
 
+ useEffect(() => {
+        document.title = 'Sing in | Travellins';
+    }, []);
+
 
   return (
     <div className="login-wrapper">
@@ -61,20 +64,11 @@ const Login = () => {
           <h2>Sign in</h2>
           <form onSubmit={handleLogin}>
             {error && <div className="error-message">{error}</div>}
-            <input
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
+
+            <input type="email"  placeholder="Email" value={email}  onChange={(e) => setEmail(e.target.value)} required/>
+            
+            <input type="password"  placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)}  required/>
+
             <Link to="/forgot-password" className="forgot-link">Forgot password?</Link>
             <button type="submit" className="login-btn">Sign in</button>
 
@@ -82,9 +76,8 @@ const Login = () => {
               <a href="http://localhost:8080/oauth2/authorization/google" className="social-btn google">
                 <i className="fab fa-google"></i> Continue with Google
               </a>
-              <a href="http://localhost:8080/login/oauth2/code/facebook" className="social-btn facebook">
-                <i className="fab fa-facebook-f"></i> Continue with Facebook
-              </a>
+              <a href="http://localhost:8080/oauth2/authorization/facebook" className="social-btn facebook">
+               <i className="fab fa-facebook-f"></i> Continue with Facebook </a>
             </div>
             <div className="bottom-links">
               <button type="button" onClick={() => navigate('/register')}>Sign up</button>

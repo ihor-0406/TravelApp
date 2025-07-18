@@ -1,61 +1,91 @@
-import React, { useEffect, useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faStar } from "@fortawesome/free-solid-svg-icons";
+import React, { useState } from 'react';
+import '../styles/ReviewCarousel.css';
 
-export default function ReviewCarousel({ tourId }) {
-  const [reviews, setReviews] = useState([]);
-  const [index, setIndex] = useState(0);
-
-  useEffect(() => {
-    if (!tourId) return;
-
-    let isMounted = true;
-
-    fetch(`/api/reviews/tour/${tourId}`)
-      .then(res => res.json())
-      .then(data => {
-        if (isMounted) setReviews(data);
-      })
-      .catch(err => console.error("Failed to load reviews", err));
-
-    return () => { isMounted = false };
-  }, [tourId]);
-
-  const next = () => setIndex((index + 1) % reviews.length);
-  const prev = () => setIndex((index - 1 + reviews.length) % reviews.length);
-
-  if (!reviews || reviews.length === 0) return null;
-
-  const current = reviews[index];
+export default function ReviewCarousel() {
+  const [reviews] = useState([
+    {
+      name: "Anna L.",
+      city: "Berlin",
+      avatarUrl: "https://randomuser.me/api/portraits/women/12.jpg",
+      rating: 5,
+      text: "Amazing trip! The guides were fantastic, and I loved every moment of the adventure."
+    },
+    {
+      name: "James K.",
+      city: "London",
+      avatarUrl: "https://randomuser.me/api/portraits/men/23.jpg",
+      rating: 4,
+      text: "The landscape was breathtaking. Organization could be slightly better, but overall a great experience."
+    },
+    {
+      name: "Maria G.",
+      city: "Barcelona",
+      avatarUrl: "https://randomuser.me/api/portraits/women/34.jpg",
+      rating: 5,
+      text: "Iceland is magical! Every stop on the tour was picture-perfect. Highly recommend."
+    },
+    {
+      name: "Lukas H.",
+      city: "Munich",
+      avatarUrl: "https://randomuser.me/api/portraits/men/45.jpg",
+      rating: 5,
+      text: "Well-organized, fun, and super friendly guides. Will definitely travel with them again!"
+    },
+    {
+      name: "Elena V.",
+      city: "Rome",
+      avatarUrl: "https://randomuser.me/api/portraits/women/51.jpg",
+      rating: 4,
+      text: "Beautiful views and relaxing atmosphere. I especially loved the hot springs."
+    },
+    {
+      name: "David S.",
+      city: "Toronto",
+      avatarUrl: "https://randomuser.me/api/portraits/men/64.jpg",
+      rating: 5,
+      text: "It felt like a once-in-a-lifetime experience. Everything went smoothly from start to finish."
+    },
+    {
+      name: "Sophie B.",
+      city: "Vienna",
+      avatarUrl: "https://randomuser.me/api/portraits/women/75.jpg",
+      rating: 5,
+      text: "So cozy and personal. Our group was small and the guide was super knowledgeable."
+    },
+    {
+      name: "Tom R.",
+      city: "Dublin",
+      avatarUrl: "https://randomuser.me/api/portraits/men/38.jpg",
+      rating: 4,
+      text: "I loved the glacier hike! The weather wasn’t perfect, but it didn’t ruin the experience."
+    }
+  ]);
 
   return (
-    <div className="review-carousel-container">
-      <h2 className="review-title">Traveler’s <span className="shine">Experiences</span></h2>
-      <p className="review-subtitle">Here’s what travelers had to say after experiencing this unforgettable tour.</p>
-
-      <div className="review-card">
-        <div className="review-header">
-          <img
-            src={`https://i.pravatar.cc/100?u=${current.id}`}
-            alt="avatar"
-            className="avatar"
-          />
-          <div>
-            <h4>{current.authorName}</h4>
-            <p>{current.location || "Traveler"}</p>
-            <div className="stars">
-              {[...Array(current.rating)].map((_, i) => (
-                <FontAwesomeIcon key={i} icon={faStar} color="#facc15" />
-              ))}
+    <div className="container py-5">
+      <div className="row flex-nowrap overflow-auto gap-4">
+        {reviews.map((r, idx) => (
+          <div className="col-12 col-md-4 flex-shrink-0" key={idx}>
+            <div className="review-card p-4 shadow-sm rounded-4 bg-white h-100">
+              <div className="d-flex align-items-center mb-3">
+                <img
+                  src={r.avatarUrl}
+                  alt={r.name}
+                  className="rounded-circle me-3"
+                  style={{ width: '48px', height: '48px', objectFit: 'cover' }}
+                />
+                <div>
+                  <h6 className="mb-0 paytone-one-regular ">{r.name}</h6>
+                  <small className="text-muted">{r.city}</small>
+                  <div className="text-warning">
+                    {'★'.repeat(r.rating || 5)}
+                  </div>
+                </div>
+              </div>
+              <p className="text-muted small inter-small ">{r.text}</p>
             </div>
           </div>
-        </div>
-        <p className="review-text">{current.comment}</p>
-      </div>
-
-      <div className="carousel-buttons">
-        <button onClick={prev}>&larr;</button>
-        <button onClick={next}>&rarr;</button>
+        ))}
       </div>
     </div>
   );

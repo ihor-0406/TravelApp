@@ -34,7 +34,7 @@ export default function TourImageAlbum({ tourId }) {
       loop={true}
       pagination={{ clickable: true }}
       modules={[Pagination]}
-      className="my-3"
+      className="m-5 rounded-4"
     >
       {images.map((img, index) => (
         <SwiperSlide key={index}>
@@ -42,7 +42,7 @@ export default function TourImageAlbum({ tourId }) {
             src={img.imageUrls}
             alt={`Tour image ${index + 1}`}
             className="img-fluid rounded w-100"
-            style={{ maxHeight: '400px',  }}
+            style={{ maxHeight: '600px',  }}
           />
         </SwiperSlide>
       ))}

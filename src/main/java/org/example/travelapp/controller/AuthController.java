@@ -3,6 +3,7 @@ package org.example.travelapp.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.travelapp.dto.LoginRequest;
 import org.example.travelapp.dto.LoginResponse;
@@ -64,7 +65,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request) {
         if (accountRepository.findByEmail(request.getEmail()).isPresent()) {
             return ResponseEntity.badRequest().body("Email already exists");
         }
@@ -97,7 +98,7 @@ public class AuthController {
         }
 
         if (email == null || name == null) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Не удалось получить email или имя от Google");
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Email not found");
             return;
         }
 
@@ -119,7 +120,7 @@ public class AuthController {
         context.setAuthentication(authToken);
         session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, context);
 
-        response.sendRedirect("http://localhost:3000/profile");
+        response.sendRedirect("/profile");
     }
 
 

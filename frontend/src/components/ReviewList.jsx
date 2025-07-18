@@ -11,37 +11,56 @@ export default function ReviewList({ tourId }) {
 
     fetch(`/api/reviews/tour/${tourId}`)
       .then(res => res.json())
-      .then(data => setReviews(data))
+      .then(data => {
+        if (Array.isArray(data)) {
+          setReviews(data);
+        } else {
+          console.error("Expected array but got:", data);
+          setReviews([]);
+        }
+      })
       .catch(err => console.error("Failed to load reviews", err));
   }, [tourId]);
 
   if (!reviews || reviews.length === 0) {
-    return <div className="alert alert-info">No reviews yet.</div>;
+    return <div className="alert alert-info rounded-pill inter-medium">No reviews yet.</div>;
   }
 
   return (
-    <div className="review-list-container mt-5">
-      <h2 className="review-title">Traveler’s <span className="shine">Experiences</span></h2>
+    <div className="container mt-5">
+      <h2 className="review-title inter-medium">Traveler’s <span className="shine">Experiences</span></h2>
       <p className="review-subtitle">Here’s what travelers had to say after this unforgettable tour.</p>
 
-      {reviews.slice(0, visibleCount).map(review => (
-        <div key={review.id} className="border rounded-3 p-3 mb-3 shadow-sm bg-light">
-          <div className="d-flex align-items-center justify-content-between mb-2">
-            <strong>{review.lastName || 'Traveler'}</strong>
-            <div>
-              {[...Array(review.rating)].map((_, i) => (
-                <FontAwesomeIcon key={i} icon={faStar} color="#facc15" />
-              ))}
+      {reviews.slice(0, visibleCount).map((review, idx) => {
+        const account = review.account || {}; // если в review есть account
+        return (
+          <div key={review.id || idx} className="bg-white rounded-4 p-4 shadow-sm mb-4 w-100">
+            <div className="d-flex align-items-center mb-3">
+              <img
+                src={review.avatarUrl || "https://as2.ftcdn.net/v2/jpg/03/31/69/91/1000_F_331699188_lRpvqxO5QRtwOM05gR50ImaaJgBx68vi.jpg"}
+                alt={review.firstName || "Traveler"}
+                className="rounded-circle me-3"
+                style={{ width: '60px', height: '60px', objectFit: 'cover' }}
+              />
+              <div>
+                <h6 className="mb-0 paytone-one-regular">{account.firstName} {account.lastName || "Traveler"}</h6>
+                <small className="text-muted">{review.city || "Unknown"}</small>
+                <div className="text-warning">
+                  {[...Array(review.rating || 0)].map((_, i) => (
+                    <FontAwesomeIcon key={i} icon={faStar} />
+                  ))}
+                </div>
+              </div>
             </div>
+            <p className="text-muted mb-0">{review.comment}</p>
           </div>
-          <p className="mb-0">{review.comment}</p>
-        </div>
-      ))}
+        );
+      })}
 
       {visibleCount < reviews.length && (
-        <div className="text-center">
+        <div className="text-center mt-3">
           <button
-            className="btn btn-outline-secondary"
+            className="btn btn-outline-dark rounded-pill px-4 py-2 inter-small"
             onClick={() => setVisibleCount(reviews.length)}
           >
             Show all reviews

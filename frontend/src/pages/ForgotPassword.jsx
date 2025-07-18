@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect} from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import '../styles/login.css';
@@ -13,7 +13,7 @@ const ForgotPassword = () => {
   const handleForgotPassword = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`http://localhost:8080/api/auth/forgot-password?email=${email}`, {}, {
+      const response = await axios.post(`/api/auth/forgot-password?email=${email}`, {}, {
         withCredentials: true,
       });
       setMessage(response.data.message || 'Please check your email for further instructions.');
@@ -22,6 +22,10 @@ const ForgotPassword = () => {
     }
   };
 
+   useEffect(() => {
+          document.title = 'Forgot Password | Travellins';
+      }, []);
+  
   return (
     <div className='login-wrapper'>
       <div className='login-card'>

@@ -1,0 +1,26 @@
+.tourDetailsBackraund{
+     position: relative;
+     width: 100vw;
+     min-height: 350px;
+     background-image:
+      linear-gradient(to top, rgba(0, 0, 0, 0.236), rgba(0, 0, 0, 0)), 
+      url('../image/car.jpg');
+     background-size: cover;
+     background-position: center;
+     background-repeat: no-repeat;
+     
+     color: white ;
+}
+.bgr-contacts-tourDetailes{
+     position: relative;
+     width: 100%;
+     min-height: 350px;
+     background-image:
+      linear-gradient(to top, rgba(0, 0, 0, 0.236), rgba(0, 0, 0, 0)), 
+      url('../image/tourDetails2.jpg');
+     background-size: cover;
+     background-position: center;
+     background-repeat: no-repeat;
+     color: white ;
+     
+}

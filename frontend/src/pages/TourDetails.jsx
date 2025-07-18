@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import Calendar from 'react-calendar';
+import { Calendar } from 'react-calendar';
+import { enUS } from 'date-fns/locale';
+import { Link } from 'react-router-dom';
+
 import 'react-calendar/dist/Calendar.css';
 import axios from 'axios';
 import NavBar from '../components/NavBar';
@@ -10,8 +13,10 @@ import { faStar as solidStar } from '@fortawesome/free-solid-svg-icons';
 import { faStar as regularStar } from '@fortawesome/free-regular-svg-icons';
 import ReviewList from '../components/ReviewList';
 import BookingModal from '../components/BookingModal';
-import '../styles/Tour.css'
+import '../styles/TourDetails.css'
 import TourImageAlbum from '../components/TourImageAlbum';
+import ToursCarousel from '../components/ToursCarousel';
+import Footer from '../components/Footer';
 
 export default function TourDetails() {
   const { id } = useParams();
@@ -22,26 +27,50 @@ export default function TourDetails() {
   const [rating, setRating] = useState(0);
   const [account, setAccount] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const location = tour?.location;
+
+useEffect(() => {
+  if (tour?.title) {
+    document.title = `${tour.title} | Travellins`;
+  }
+}, [tour]);
 
   useEffect(() => {
-    axios.get(`/api/tours/${id}`)
-      .then(res => setTour(res.data))
-      .catch(err => console.error('Error loading tour:', err));
+  axios.get(`/api/tours/${id}`)
+    .then(res => 
+      setTour(res.data))
+    .catch(err => console.error( err));
 
-    axios.get('http://localhost:8080/api/profile', { withCredentials: true })
-      .then(res => setAccount(res.data))
-      .catch(() => setAccount(null));
-  }, [id]);
+  axios.get('/api/profile', { withCredentials: true })
+    .then(res => setAccount(res.data))
+    .catch(() => setAccount(null));
+}, [id]);
 
-  const handleSubmitReview = () => {
-    axios.post(`/api/reviews/tour/${id}`, { comment, rating }, { withCredentials: true })
-      .then(() => {
-        setComment("");
-        setRating(0);
-        alert("Review submitted");
-      })
-      .catch(() => alert("Error submitting review"));
-  };
+
+
+ const handleSubmitReview = () => {
+  axios.get('/api/profile', { withCredentials: true })
+    .then(res => {
+      const currentUser = res.data;
+      if (!currentUser) {
+        alert("Please log in to submit a review");
+        return;
+      }
+
+      axios.post(`/api/reviews/tour/${id}`, { comment, rating }, { withCredentials: true })
+        .then(() => {
+          setComment("");
+          setRating(0);
+          alert("Review submitted");
+        })
+        .catch(() => alert("Error submitting review"));
+    })
+    .catch(() => {
+      alert("Please log in to submit a review");
+    });
+};
+
+
 
   const renderStars = (rating) => {
     const fullStars = Math.floor(rating);
@@ -61,73 +90,192 @@ export default function TourDetails() {
   const incrementPeople = () => setPeople(p => p + 1);
   const decrementPeople = () => setPeople(p => (p > 1 ? p - 1 : 1));
 
-  if (!tour) return <div className="text-center py-5">Loading tour...</div>;
+  if (!tour) return <div class="spinner-border" role="status"> <span class="visually-hidden">Loading...</span> </div>
 
   return (
     <>
-    <header className='tourBackraund'>
+    <header className='tourDetailsBackraund'>
         <NavBar />
-      </header>
-    <div>
-      <h1 className="fw-bold mb-3">{tour.title}</h1>
-      <p className="text-muted mb-2">{tour.description}</p>
-      <div className="mb-3">{renderStars(tour.averageRating || 0)}</div>
-
-      <div className="row mb-5">
-        <div className="col-md-7">
-          <img src={tour.imageUrl || "https://via.placeholder.com/800x400"} className="img-fluid rounded-4 mb-3" alt={tour.title} />
-          <div className="row text-center">
-            <div className="col"><strong>{tour.location}</strong><br />Departs from</div>
-            <div className="col"><strong>{tour.duration}</strong><br />Duration</div>
-            <div className="col"><strong>{tour.maxPeople}</strong><br />Group size</div>
-            <div className="col"><strong>{tour.availability}</strong><br />Availability</div>
-            <div className="col"><strong>{tour.difficulty}</strong><br />Difficulty</div>
-            <div className="col"><strong>{tour.type}</strong><br />Tour type</div>
+         <div className="mt-3">
+             <nav  style={{ ['--bs-breadcrumb-divider']: "'>'" }} aria-label="breadcrumb">
+              <ol className="breadcrumb mt-2">
+                <li className="breadcrumb-item    inter-very-small ms-4">
+                  <a className='text-white text-decoration-none' href="/">Home</a>
+               </li>
+                <li className="breadcrumb-item   inter-very-small ms-4">
+                  <a className='text-white text-decoration-none' href="/tours">Tours</a>
+               </li>
+               <li className="breadcrumb-item active inter-very-small text-white" aria-current="page">{tour?.title} </li>
+              </ol>
+              </nav>
           </div>
+      </header>
+      <div className='m-5'>
+        <div className="row my-5 align-items-center">
+          <div className="col-md-6 mb-4 mb-md-0">
+            <h2 className="fw-bold mb-3 paytone-one-regular">{tour?.title}</h2>
+            <div className="d-flex align-items-center mb-2">
+              {renderStars(tour.averageRating || 0)}
+              <span className="ms-2 text-muted small inter-very-small">{tour.averageRating?.toFixed(1) || '0.0'} · {tour.reviewCount || 0} reviews</span>
+            </div>
+            <p className="text-muted inter-medium ">{tour.description}</p>
+            <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location)}`} target="_blank" rel="noopener noreferrer" className="btn btn-outline-success rounded-pill px-3 mt-3">
+            <i className="fa-solid fa-map me-2"></i> Map
+            <i className="fa-solid fa-arrow-up-right-from-square ms-2"></i>
+            </a>
+      </div>
+      <div className="col-md-6">
+        <img
+          src={tour.imageUrl || "https://via.placeholder.com/800x400"}
+          className="img-fluid rounded-4 shadow"
+          alt={tour.title}
+          style={{ objectFit: 'cover', width: '100%', maxHeight: '400px' }}
+        />
+      </div>
+    </div>
+  </div>
 
-          <h5 className="fw-bold mt-5">What's Included</h5>
-          <ul>
-            <li>English-speaking driver guide</li>
-            <li>Pick-up and drop-off</li>
-            <li>Snacks & drinks</li>
-            <li>Entrance fees</li>
-          </ul>
 
-          <h5 className="fw-bold mt-4">What to Bring</h5>
-          <ul>
-            <li>Warm Outdoor Clothing</li>
-            <li>Waterproof Jacket and Pants</li>
-            <li>Hiking Boots</li>
-            <li>Lunch & Snacks</li>
-          </ul>
+   <div className="m-5">
+  <div className="row mb-5 ">
+    <div className="col-md-7  ">
+      <div className="row text-center border-bottom border-top border-dark py-3 me-3 text-muted mb-4">
+        <div className="col mb-3">
+          <i className="fa-solid fa-map-location"></i>
+          <p className='inter-very-small'>Depart`s from</p>
+          <div className="inter-small ">{tour.location}</div>
         </div>
+        <div className="col mb-3">
+          <i className="fa-solid fa-clock"></i>
+          <p className='inter-very-small'>Duration</p>
+          <div className="pt-3 inter-small ">{tour.duration}</div>
+        </div>
+        <div className="col mb-3">
+          <i className="fa-solid fa-user-group"></i>
+          <p className='inter-very-small'>Group size</p>
+          <div className="pt-3 inter-small ">{tour.maxPeople}</div>
+        </div>
+        <div className="col mb-3">
+          <i className="fa-solid fa-cloud-sun-rain"></i>
+          <p className='inter-very-small'>Availability</p>
+          <div className="pt-3 inter-small ">{tour.availability}</div>
+      
+        </div>
+        <div className="col mb-3">
+          <i className="fa-solid fa-gauge-high"></i>
+          <p className='inter-very-small'>Difficulty</p>
+          <div className=" pt-3 inter-small ">{tour.difficulty}</div>
+      
+        </div>
+        <div className="col mb-3">
+         <i className="fa-solid fa-location-dot"></i>
+         <p className='inter-very-small'>Tour type</p>
+          <div className=" pt-3 inter-small ">{tour.type}</div>
+        </div>
+      </div>
+      <div className='ms-5'>
+        <h5 className="fw-bold mt-5 ">Higlights</h5>
+      <ul className="list-unstyled text-muted">
+        <li><i className="fa-solid fa-thumbtack me-2"></i> Experience the total solar eclipse</li>
+        <li><i className="fa-solid fa-thumbtack me-2"></i> Reach the best observation spot</li>
+        <li><i className="fa-solid fa-thumbtack me-2"></i> Celebrate the event with free drinks</li>
+        <li><i className="fa-solid fa-thumbtack me-2"></i> Visit the stunning Snasafellsnes Peninsula</li>
+      </ul>
+
+
+      <h5 className="fw-bold mt-5">What’s Included</h5>
+      <ul className="list-unstyled text-muted">
+        <li><i className="fa-solid fa-check text-success me-2"></i> English-speaking driver guide</li>
+        <li><i className="fa-solid fa-check text-success me-2"></i> Pick-up and drop-off</li>
+        <li><i className="fa-solid fa-check text-success me-2"></i> Snacks & drinks</li>
+        <li><i className="fa-solid fa-check text-success me-2"></i> Entrance fees</li>
+      </ul>
+
+      <h5 className="fw-bold mt-4">What to Bring</h5>
+      <ul className="list-unstyled text-muted">
+        <li><i className="fa-solid fa-xmark text-danger me-2"></i> Warm Outdoor Clothing</li>
+        <li><i className="fa-solid fa-xmark text-danger me-2"></i> Waterproof Jacket and Pants</li>
+        <li><i className="fa-solid fa-xmark text-danger me-2"></i> Hiking Boots</li>
+        <li><i className="fa-solid fa-xmark text-danger me-2"></i> Lunch & Snacks</li>
+      </ul>
+    </div>
+    </div>
+      
 
         <div className="col-md-5">
-          <div className="border rounded-4 p-4 shadow-sm">
-            <h5>Select a Date</h5>
-            <Calendar onChange={setDate} value={date} className="mb-4" />
-
+          <div className="border border-dark rounded-4 p-4 shadow-sm">
+            <h5 className='paytone-one-regular p-2'>Select a Date</h5>
+            <Calendar onChange={setDate} value={date} locale="en-US" className="mb-4 rounded-4 bg-secondary-subtle"/>
             <div className="mb-3">
               <label className="form-label fw-bold">Number of People</label>
-              <div className="d-flex align-items-center">
-                <button onClick={decrementPeople} className="btn btn-outline-secondary me-2">&lt;</button>
-                <span className="px-3 fw-bold">{people}</span>
-                <button onClick={incrementPeople} className="btn btn-outline-secondary ms-2">&gt;</button>
+              <div className="d-flex align-items-center p-2">
+                <button onClick={decrementPeople} className="btn btn-outline-secondary rounded-circle me-2"><i className="fa-solid fa-chevron-left"></i></button>
+                <span className="px-2 fw-bold">{people}</span>
+                <button onClick={incrementPeople} className="btn btn-outline-secondary rounded-circle ms-2"><i className="fa-solid fa-chevron-right"></i></button>
               </div>
             </div>
-
-            <div className="d-flex justify-content-between align-items-center mb-3">
-              <span className="fw-bold">Total:</span>
-              <span className="fs-5">€{(tour.price * people).toFixed(2)}</span>
+            
+            <div className="d-flex align-items-center gap-2">
+              {tour.discountValue && tour.discountPrice && tour.discountValue > 0 ? (
+                <>
+                <span className="text-decoration-line-through text-muted inter-small">
+                  €{Number(tour.price).toFixed(2)}</span>
+                <span className="text-danger  inter-large">€{Number(tour.discountPrice).toFixed(2)} <small className="text-danger inter-medium ">(-{tour.discountValue}%)</small></span></>
+                ) : (
+                <span className="h5 mb-0 ">€{Number(tour.price).toFixed(2)}</span>)}
             </div>
 
-            <button className="btn btn-outline-dark w-100 mb-2">Add to cart</button>
-            <button className="btn btn-success w-100" onClick={() => setShowModal(true)}>Book now</button>
+
+            <button className="btn btn-success rounded-pill my-3 w-100" onClick={() => setShowModal(true)}>Book now</button>
           </div>
         </div>
       </div>
+       
+       
+        <div className='bgr-contacts-tourDetailes'>
+             <div className='d-flex justify-content-between align-items-center flex-column m-auto py-5 px-auto'>
+               <h1 className=' inter-large '>
+                 Need help planning your adventure?
+               </h1>
+               <p className='inter-small py-2'>
+                 Contact us and we`ll make your Iceland trip unforgettable.
+               </p>
+                <Link  className="btn btn-outline-light rounded-pill px-5 py-2 my-3 inter-small">
+                Contact us
+                </Link>
+             </div>
+           </div>
       
       <TourImageAlbum tourId={id} />
+
+<div className='d-flex justify-content-between align-items-center  flex-column flex-md-row   p-4 mx-5'>
+           <div className='d-flex flex-column flex-md-row align-items-md-end align-items-sm-center'>
+            <div className='px-4 fw-bolder fs-2 mt-5'>
+              <h1 className='paytone-one-large'>
+                You may <br />
+                also like
+             </h1>
+           </div>
+           <div className='ps-md-3 pt-3'>
+            <p className='inter-very-small'>
+              Grom breathtaking giaciers to hiffen hot springs - <br />
+              these are the tours that capture the spirit of Iceland. <br />
+              <span className='fw-bolder'>
+               Handpicked based on real traveler experiences <br />
+               and expert recomendations.
+             </span>
+           </p>
+         </div>
+       </div>
+       <div className='mt-5'>
+                <Link to="/tours" className="btn btn-outline-dark rounded-pill px-4 py-2 inter-small">
+                See More Tours 
+                </Link>
+              </div>
+    </div>
+    <div className=' pb-5'>
+            <ToursCarousel/>
+    </div>
 
       <ReviewList tourId={id} />
 
@@ -159,27 +307,31 @@ export default function TourDetails() {
             </div>
           </div>
 
-          <button className="btn btn-outline-primary mb-4" onClick={handleSubmitReview}>
+          <button className="btn btn-outline-dark rounded-pill px-4 py-2 inter-small" onClick={handleSubmitReview}>
             Submit Review
           </button>
         </>
       ) : (
-        <div className="alert alert-info mt-5">
-          Please <a href="/login" className="alert-link">sign in</a> to leave a review.
+        <div className="alert alert-info mt-5 rounded-pill inter-medium">
+          Please <a href="/login" className="alert-link text-warning">sign in</a> to leave a review.
         </div>
       )}
 
       {showModal && (
-        <BookingModal
-          onClose={() => setShowModal(false)}
-          tourId={id}
-          tourTitle={tour.title}
-          date={date}
-          people={people}
-          userEmail={account.email}
-        />
-      )}
+  <BookingModal
+    onClose={() => setShowModal(false)}
+    tourId={id}
+    tourTitle={tour.title}
+    date={date}
+    people={people}
+    userEmail={account?.email || ""}
+  />
+)}
+
     </div>
+    <footer>
+      <Footer/>
+    </footer>
     </>
     
   );

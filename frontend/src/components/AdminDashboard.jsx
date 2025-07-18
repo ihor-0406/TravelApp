@@ -96,7 +96,7 @@ const doughnutData = {
 
   return (
     <div className="container mt-4">
-      <h2 className="mb-4">Admin Dashboard</h2>
+      <h2 className="mb-4 inter-large ">Admin Dashboard</h2>
 
       <div className="row mb-5">
         <div className="col-md-4">
@@ -142,8 +142,8 @@ const doughnutData = {
 
 
 
-      <div className="mt-5">
-        <h5>User List</h5>
+      <div className="mt-5 ">
+        <h5 className='inter-large '>User List</h5>
         <table className="table table-bordered table-hover">
           <thead>
             <tr>

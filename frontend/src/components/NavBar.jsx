@@ -62,22 +62,22 @@ const [role, setRole] = useState(null);
         <div className="collapse navbar-collapse " id="navbarNav">
           <ul className="navbar-nav mx-auto">
             <li className="nav-item ">
-              <Link className="nav-link active text-white" to="/">
+              <Link className="nav-link active text-white paytone-one-regular" to="/">
                 Home
               </Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link text-white" to="/tours">
+              <Link className="nav-link text-white paytone-one-regular" to="/tours">
                 Tours
               </Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link text-white" to="#">
+              <Link className="nav-link text-white paytone-one-regular" to="#">
                 Contact
               </Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link text-white" to="#">
+              <Link className="nav-link text-white paytone-one-regular" to="#">
                 About Us
               </Link>
             </li>
@@ -86,7 +86,7 @@ const [role, setRole] = useState(null);
           {!isLoggedIn ? (
             <ul className="navbar-nav ms-auto  text-end">
               <li className="nav-item">
-                <Link className="nav-link" to="/login">
+                <Link className="nav-link text-white paytone-one-regular" to="/login">
                   Sign in
                 </Link>
               </li>
@@ -102,17 +102,17 @@ const [role, setRole] = useState(null);
                 <img
                   src={avatarUrl}
                   alt="avatar"
-                  width="32"
-                  height="32"
-                  className="rounded-circle"
+                  width="55"
+                  height="55"
+                  className="rounded-circle border border-3 me-3"
                 />
               </Link>
               <ul className="dropdown-menu dropdown-menu-end text-small">
                 <li>
                  {role === "ADMIN" ? (
-                  <Link className="dropdown-item" to="/admin">Admin Panel</Link>
+                  <Link className="dropdown-item inter-medium " to="/admin">Admin Panel</Link>
                 ) : (
-                <Link className="dropdown-item" to="/profile">Profile</Link>
+                <Link className="dropdown-item inter-medium " to="/profile">Profile</Link>
                 )}
                 </li>
                 <li>
@@ -120,7 +120,7 @@ const [role, setRole] = useState(null);
                 </li>
                 <li>
                   <button
-                    className="dropdown-item"
+                    className="dropdown-item inter-medium "
                     onClick={handleLogout}
                   >
                     Logout

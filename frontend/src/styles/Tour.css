@@ -1,11 +1,18 @@
+
 .tourBackraund{
      position: relative;
      width: 100vw;
      min-height: 350px;
-     background-image: url('../image/tours.jpg');
+     background-image:
+      linear-gradient(to top, rgba(0, 0, 0, 0.236), rgba(0, 0, 0, 0)), 
+      url('../image/tours.jpg');
      background-size: cover;
      background-position: center;
      background-repeat: no-repeat;
-     filter: brightness(80%);
+     
      color: white ;
 }
+.breadcrumb-item + .breadcrumb-item::before {
+  color: white !important;
+}
+

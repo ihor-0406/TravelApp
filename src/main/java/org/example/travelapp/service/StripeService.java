@@ -16,6 +16,10 @@ public class StripeService {
     @Value("${stripe.secret.key}")
     private String secretKey;
 
+    @Value("${frontend.url}")
+    private String frontendUrl;
+
+
     @PostConstruct
     public void init() {
         Stripe.apiKey = secretKey;
@@ -32,8 +36,8 @@ public class StripeService {
     public SessionCreateParams buildSessionParams(String tourTitle, long amount, Long tourId, String email) {
         return SessionCreateParams.builder()
                 .setMode(SessionCreateParams.Mode.PAYMENT)
-                .setSuccessUrl("http://localhost:3000/success?session_id={CHECKOUT_SESSION_ID}")
-                .setCancelUrl("http://localhost:3000/booking-cancelled")
+                .setSuccessUrl  (frontendUrl +"/success?session_id={CHECKOUT_SESSION_ID}")
+                .setCancelUrl(frontendUrl + "/booking-cancelled")
                 .addLineItem(
                         SessionCreateParams.LineItem.builder()
                                 .setQuantity(1L)

@@ -1,6 +1,7 @@
 package org.example.travelapp.security;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,7 +28,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+    private final  CustomAccessDeniedHandler accessDeniedHandler;
     private final UserDetailsService userDetailsService;
+
+    @Value("${frontend.url}")
+    private String frontendUrl;
+
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationSuccessHandler authenticationSuccessHandler, AuthHandler authHandler) throws Exception {
@@ -56,22 +62,23 @@ public class SecurityConfig {
                                 "/api/profile/**").authenticated()
                         .anyRequest().permitAll() //
                 )
+                .exceptionHandling(ex -> ex.accessDeniedHandler(accessDeniedHandler))
                 .oauth2Login(oauth2 -> oauth2
                                 .loginPage("/login")
                         .successHandler((request, response, authentication) -> {
-                            response.sendRedirect("http://localhost:3000/profile");
+                            response.sendRedirect("/profile");
                         })
                 )
                 .formLogin(form -> form
                                 .loginPage("/login")
                                 .successHandler(authenticationSuccessHandler)
                                 .defaultSuccessUrl("/profile", true)
-                                .failureUrl("/login.html&error=true")
+                                 .failureUrl("/login?error=true")
                         .permitAll()
                 )
                 .logout(logout -> logout
                         .logoutUrl("/api/auth/logout")
-                        .logoutSuccessUrl("http://localhost:3000/")
+                        .logoutSuccessUrl(frontendUrl + "/")
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID")
                         .permitAll()
@@ -101,7 +108,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:3000"));
+        configuration.setAllowedOrigins(List.of(frontendUrl));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
         configuration.setAllowCredentials(true);

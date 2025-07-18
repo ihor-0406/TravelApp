@@ -1,6 +1,7 @@
 footer {
   position: relative;
   width: 100vw;
+  min-height: 350px;
   color: white;
   overflow: hidden;
 }
@@ -9,17 +10,17 @@ footer::before {
   content: "";
   position: absolute;
   inset: 0;
-  background-image: url('../image/footer.jpg'); 
+  background-image:linear-gradient(to top, rgba(0, 0, 0, 0.753), rgba(0, 0, 0, 0.282)),  url('../image/footer.jpg'); 
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  filter: brightness(40%);
+  /* filter: brightness(40%); */
   z-index: 0;
 }
 
 footer * {
   position: relative;
-  z-index: 1; /* текст и иконки будут над затемнённым фоном */
+  z-index: 1; 
 }
 
 footer ul li {

@@ -11,8 +11,12 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class TourDto {
     private Long id;
+    private String location;
     private String title;
     private String description;
+    private String duration;
+    private String availability;
+    private String difficulty;
     private BigDecimal price;
     private String imageUrl;
     private BigDecimal discountValue; //..%..

@@ -29,7 +29,7 @@ export default function AdminReviews() {
           className="border rounded shadow-sm p-3 mb-3 position-relative bg-white"
         >
           <button
-            className="btn btn-outline-danger btn-sm position-absolute top-0 end-0 m-2"
+            className="btn btn-outline-danger btn-sm position-absolute rounded-circle top-0 end-0 m-2"
             onClick={() => deleteReview(r.id)}
             title="Delete review"
           >

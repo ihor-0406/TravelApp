@@ -6,15 +6,13 @@ export default function AdminBookings() {
 
 
   useEffect(() => {
-    console.log("Компонент AdminBookings монтируется...");
-
+    
     axios.get('/api/bookings', { withCredentials: true })
       .then(res => {
-        console.log("Бронирования загружены:", res.data);
         setBookings(res.data);
       })
       .catch(err => {
-        console.error("Ошибка при загрузке бронирований:", err);
+        console.error( err);
       });
   }, []);
 
@@ -90,10 +88,10 @@ export default function AdminBookings() {
               </td>
               <td>
                 <button
-                  className="btn btn-sm btn-danger"
+                  className="btn btn-sm btn-danger rounded-pill"
                   onClick={() => handleDelete(b.id)}
                 >
-                  🗑 Удалить
+                  Delete
                 </button>
               </td>
             </tr>
