@@ -65,9 +65,8 @@ public class SecurityConfig {
                 .exceptionHandling(ex -> ex.accessDeniedHandler(accessDeniedHandler))
                 .oauth2Login(oauth2 -> oauth2
                                 .loginPage("/login")
-                        .successHandler((request, response, authentication) -> {
-                            response.sendRedirect("/profile");
-                        })
+                        .successHandler(authenticationSuccessHandler)
+
                 )
                 .formLogin(form -> form
                                 .loginPage("/login")

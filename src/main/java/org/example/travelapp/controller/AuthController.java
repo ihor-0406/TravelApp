@@ -120,7 +120,7 @@ public class AuthController {
         context.setAuthentication(authToken);
         session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, context);
 
-        response.sendRedirect("/profile");
+        response.sendRedirect("/");
     }
 
 

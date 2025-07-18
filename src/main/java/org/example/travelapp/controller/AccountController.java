@@ -11,6 +11,7 @@ import org.example.travelapp.service.BookingService;
 import org.example.travelapp.service.FavoriteService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +31,9 @@ public class AccountController {
 
     @GetMapping
     public ResponseEntity<AccountDto> getCurrentAccount(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
         System.out.println("Processing /api/profile request for email: " + authentication.getName());
         String email = authentication.getName();
         Object principal = authentication.getPrincipal();
