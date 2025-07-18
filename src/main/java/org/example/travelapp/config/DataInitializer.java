@@ -41,6 +41,22 @@ public class DataInitializer {
                 return accountRepository.save(newAdmin);
             });
 
+            // ----------- User ----------
+
+            String userEmail = "user@user.com";
+            Account user = accountRepository.findByEmail(userEmail).orElseGet(() -> {
+                Account newUser = new Account();
+                newUser.setEmail(userEmail);
+                newUser.setPasswordHash(passwordEncoder.encode("User123!"));
+                newUser.setFirstName("Regular");
+                newUser.setLastName("User");
+                newUser.setRole(Role.USER);
+                newUser.setDateOfBirth(LocalDate.of(1997, 5, 20));
+                newUser.setRegistrationDate(LocalDate.now());
+                return accountRepository.save(newUser);
+            });
+
+
             // ----------- Tours ----------
             List<Tour> tours = List.of(
                     createTourWithAlbum("Golden Circle Adventure",

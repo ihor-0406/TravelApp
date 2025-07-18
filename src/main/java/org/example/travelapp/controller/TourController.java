@@ -223,7 +223,7 @@ public class TourController {
         } else if (!tour.getAlbum().isEmpty()) {
             dto.setImageUrl(tour.getAlbum().get(0).getImageUrls());
         } else {
-            dto.setImageUrl("https://www.svgrepo.com/show/452030/avatar-default.svg");
+            dto.setImageUrl("https://res.cloudinary.com/dosi8fdjm/image/upload/v1752826438/a1_gnedfy.jpg");
         }
 
         dto.setRating(

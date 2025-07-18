@@ -1,0 +1,35 @@
+{
+  "files": {
+    "main.css": "/static/css/main.67bda3ed.css",
+    "main.js": "/static/js/main.50a5d834.js",
+    "static/js/453.670e15c7.chunk.js": "/static/js/453.670e15c7.chunk.js",
+    "static/media/bgn.jpg": "/static/media/bgn.0f9e6b505b898919449e.jpg",
+    "static/media/countact.jpg": "/static/media/countact.1b57db97314d2f0d82d1.jpg",
+    "static/media/bgn1.jpg": "/static/media/bgn1.6c11ed966b1f03c1cacd.jpg",
+    "static/media/login.jpg": "/static/media/login.46882ebb3fa6a111b917.jpg",
+    "static/media/profile.jpg": "/static/media/profile.6b6c742f381bdddaab04.jpg",
+    "static/media/car.jpg": "/static/media/car.03bf6a6a91d77dcd09ba.jpg",
+    "static/media/footer.jpg": "/static/media/footer.ee8bf2cfff2f6ce86085.jpg",
+    "static/media/tours.jpg": "/static/media/tours.dbbd40ca06d938f67d2c.jpg",
+    "static/media/tourDetails2.jpg": "/static/media/tourDetails2.0096339c84943c379a95.jpg",
+    "static/media/2.jpg": "/static/media/2.d5895e1d0cfe4b2bef20.jpg",
+    "static/media/fa-solid-900.ttf": "/static/media/fa-solid-900.2582b0e4bcf85eceead0.ttf",
+    "static/media/fa-brands-400.ttf": "/static/media/fa-brands-400.1815e00441357e01619e.ttf",
+    "static/media/fa-solid-900.woff2": "/static/media/fa-solid-900.2463b90d9a316e4e5294.woff2",
+    "static/media/1.jpg": "/static/media/1.8ec58fa9e2b74a1d63c9.jpg",
+    "static/media/fa-brands-400.woff2": "/static/media/fa-brands-400.c210719e60948b211a12.woff2",
+    "static/media/image3.jpg": "/static/media/image3.9d339f457bc58364e75c.jpg",
+    "static/media/fa-regular-400.ttf": "/static/media/fa-regular-400.914997e1bdfc990d0897.ttf",
+    "static/media/fa-regular-400.woff2": "/static/media/fa-regular-400.89999bdf5d835c012025.woff2",
+    "static/media/fa-v4compatibility.ttf": "/static/media/fa-v4compatibility.da94ef451f4969af06e6.ttf",
+    "static/media/fa-v4compatibility.woff2": "/static/media/fa-v4compatibility.ea8f94e1d22e0d35ccd4.woff2",
+    "index.html": "/index.html",
+    "main.67bda3ed.css.map": "/static/css/main.67bda3ed.css.map",
+    "main.50a5d834.js.map": "/static/js/main.50a5d834.js.map",
+    "453.670e15c7.chunk.js.map": "/static/js/453.670e15c7.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.67bda3ed.css",
+    "static/js/main.50a5d834.js"
+  ]
+}
