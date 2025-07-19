@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import React from "react";
+import { Routes, Route } from "react-router-dom";
 
 import Login from "./pages/login.jsx";
 import Profile from "./pages/profile.jsx";
@@ -14,24 +14,7 @@ import Success from "./pages/Success.jsx";
 import Unauthorized from "./pages/Unauthorized.jsx";
 import AdminPanel from "./components/AdminPanel";
 
-import axios from "axios";
-import "@fortawesome/fontawesome-free/css/all.min.css";
-import "./App.css";
-
-function AppRoutes() {
-useEffect(() => {
-  axios.get('/api/auth/user')
-    .then((res) => {
-      console.log("User is authenticated", res.data);
-      setUser(res.data); 
-    })
-    .catch((err) => {
-      console.log("Not authenticated");
-      setUser(null);
-    });
-}, []);
-
-
+export default function AppRoutes({ account }) {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
@@ -40,15 +23,16 @@ useEffect(() => {
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/oauth2/callback" element={<OAuthCallback />} />
-      <Route path="/profile" element={<Profile />} />
+      <Route path="/profile" element={<Profile account={account} />} />
       <Route path="/tours" element={<Tours />} />
       <Route path="/tours/:id" element={<TourDetails />} />
       <Route path="/success" element={<Success />} />
       <Route path="/unauthorized" element={<Unauthorized />} />
-      <Route path="/admin" element={<AdminPanel />} />
+      <Route path="/admin" element={<AdminPanel account={account} />} />
     </Routes>
   );
 }
+
 
 export default function App() {
   const [account, setAccount] = useState(null);
@@ -56,15 +40,22 @@ export default function App() {
 
   useEffect(() => {
     axios
-      .get("/api/auth/user", { withCredentials: true })
-      .then((res) => setAccount(res.data))
+      .get("/api/profile", { withCredentials: true })
+      .then((res) => {
+        if (res.data?.email && res.data.email !== "anonymousUser") {
+          setAccount(res.data);
+        } else {
+          setAccount(null);
+        }
+      })
       .catch(() => setAccount(null))
       .finally(() => setIsLoading(false));
   }, []);
 
   return (
     <Router>
-      <AppRoutes />
+      <NavBar account={account} isLoading={isLoading} />
+      <AppRoutes account={account} />
     </Router>
   );
 }
