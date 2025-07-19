@@ -19,7 +19,7 @@ import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
-public class TourRepositoryImpl implements TourRepositoryCustom {
+public class TourRepositoryImpl implements TourFilterRepository {
 
     @PersistenceContext
     private EntityManager entityManager;

@@ -7,30 +7,29 @@ import org.example.travelapp.model.*;
 import org.example.travelapp.repository.AccountRepository;
 import org.example.travelapp.repository.DiscountRepository;
 import org.example.travelapp.repository.TourRepository;
+import org.example.travelapp.repository.TourFilterRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-
 import java.util.Optional;
-
-
 
 @Service
 @RequiredArgsConstructor
 public class TourService {
+
     private final TourRepository tourRepository;
+    private final TourFilterRepository tourFilterRepository;
     private final AccountRepository accountRepository;
     private final DiscountRepository discountRepository;
 
-    public Page<Tour> findAll( Pageable pageable) {
-        return tourRepository.findAll( pageable );
+    public Page<Tour> findAll(Pageable pageable) {
+        return tourRepository.findAll(pageable);
     }
 
     public Optional<Tour> findById(Long id) {
         return tourRepository.findById(id);
     }
-
 
     public Tour create(TourCreateRequestDto dto, String createdByEmail) {
         Account account = accountRepository.findByEmail(createdByEmail)
@@ -52,9 +51,7 @@ public class TourService {
         return tourRepository.save(tour);
     }
 
-
-
-    public  Tour update(Long id, Tour updated, String adminEmail) {
+    public Tour update(Long id, Tour updated, String adminEmail) {
         Tour existing = tourRepository.findById(id)
                 .orElseThrow();
 
@@ -74,7 +71,6 @@ public class TourService {
     }
 
     public Page<Tour> filterTours(TourFilterRequstDto request, Pageable pageable) {
-        return tourRepository.filterTours(request, pageable);
+        return tourFilterRepository.filterTours(request, pageable);
     }
-
 }
