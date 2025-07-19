@@ -10,10 +10,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class FrontendController {
 
-    @GetMapping(value = {"/{path:[^\\.]*}"})
+    @GetMapping(value = {"/{path:^(?!api|static|uploads|favicon\\.ico|.*\\..*).*}", "/**/{path:^(?!api|static|uploads|favicon\\.ico|.*\\..*).*}"})
     public String forward() {
         return "forward:/index.html";
     }
+
 }
 
 
