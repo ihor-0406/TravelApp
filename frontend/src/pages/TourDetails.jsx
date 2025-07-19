@@ -41,7 +41,7 @@ useEffect(() => {
       setTour(res.data))
     .catch(err => console.error( err));
 
-  axios.get('/api/auth/user', { withCredentials: true })
+  axios.get('/api/profile', { withCredentials: true })
     .then(res => setAccount(res.data))
     .catch(() => setAccount(null));
 }, [id]);
@@ -49,7 +49,7 @@ useEffect(() => {
 
 
  const handleSubmitReview = () => {
-  axios.get('/api/auth/user', { withCredentials: true })
+  axios.get('/api/profile', { withCredentials: true })
     .then(res => {
       const currentUser = res.data;
       if (!currentUser) {
