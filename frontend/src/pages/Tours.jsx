@@ -44,12 +44,16 @@ export default function ToursPage() {
     }, []);
 
   useEffect(() => {
-    setPage(0); 
-    fetchTours(0, true);
-  }, [filters]);
+      setTours([]);   
+      setPage(0);   
+      setHasMore(true);
+    }, [filters]);
 
+    useEffect(() => {
+      fetchTours(page);
+    }, [page]);
 
-  const fetchTours = (pageNumber = 0, reset = false) => {
+  const fetchTours = (pageNumber = 0) => {
   setLoading(true);
 
   fetch(`/api/tours/filter?page=${pageNumber}&size=${size}`, {
@@ -61,13 +65,7 @@ export default function ToursPage() {
     .then(data => {
       if (!data || !Array.isArray(data.content)) throw new Error("Invalid response");
 
-      if (reset) {
-        setTours(data.content);
-      } else {
-        setTours(prevTours => [...prevTours, ...data.content]);
-      }
-
-      setPage(data.number);
+      setTours(prev => pageNumber === 0 ? data.content : [...prev, ...data.content]);
       setHasMore(!data.last);
       setLoading(false);
     })
@@ -76,6 +74,7 @@ export default function ToursPage() {
       setLoading(false);
     });
 };
+
 
 
   const toggleFilter = (key, value) => {
@@ -159,17 +158,22 @@ export default function ToursPage() {
               </div>
             )}
             {hasMore && (
-              <div className="text-center">
-                <button className="btn btn-outline-dark rounded-pill px-4 py-2 inter-small" onClick={() => fetchTours(page + 1)} disabled={loading}>
-                  {loading ? (
-                  <>
-                  <div class="spinner-border text-secondary" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                    </div>
-                  </>
-                  ) : ('Load More')}
+                <div className="text-center">
+                  <button
+                    className="btn btn-outline-dark rounded-pill px-4 py-2 inter-small"
+                    onClick={() => setPage(prev => prev + 1)} // ✅ просто увеличиваем page
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <>
+                        <div className="spinner-border text-secondary" role="status">
+                          <span className="visually-hidden">Loading...</span>
+                        </div>
+                      </>
+                    ) : ('Load More')}
                   </button>
-              </div> )}
+                </div>
+              )}
           </div>
         </div>
       </div>
