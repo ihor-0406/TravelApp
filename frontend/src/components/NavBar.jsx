@@ -18,16 +18,23 @@ const [role, setRole] = useState(null);
   axios
     .get("/api/profile", { withCredentials: true })
     .then((res) => {
-      setIsLoggedIn(true);
-      setAvatarUrl(res.data.avatarUrl || avatarUrl);
-      setRole(res.data.role); 
+      if (res.data.email === "anonymousUser") {
+        setIsLoggedIn(false);
+        setAvatarUrl("https://cdn-icons-png.flaticon.com/512/149/149071.png");
+        setRole(null);
+      } else {
+        setIsLoggedIn(true);
+        setAvatarUrl(res.data.avatarUrl || avatarUrl);
+        setRole(res.data.role);
+      }
     })
     .catch(() => {
       setIsLoggedIn(false);
       setAvatarUrl("https://cdn-icons-png.flaticon.com/512/149/149071.png");
-      setRole(null); 
+      setRole(null);
     });
 }, []);
+
 
   const handleLogout = () => {
     axios
