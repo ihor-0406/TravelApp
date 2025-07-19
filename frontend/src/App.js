@@ -1,5 +1,5 @@
-import React from "react";
-import { Routes, Route } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import Login from "./pages/login.jsx";
 import Profile from "./pages/profile.jsx";
@@ -13,8 +13,10 @@ import TourDetails from "./pages/TourDetails.jsx";
 import Success from "./pages/Success.jsx";
 import Unauthorized from "./pages/Unauthorized.jsx";
 import AdminPanel from "./components/AdminPanel";
+import NavBar from "./components/NavBar";
+import axios from "axios";
 
-export default function AppRoutes({ account }) {
+function AppRoutes({ account }) {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
@@ -32,7 +34,6 @@ export default function AppRoutes({ account }) {
     </Routes>
   );
 }
-
 
 export default function App() {
   const [account, setAccount] = useState(null);
