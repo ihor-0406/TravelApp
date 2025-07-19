@@ -44,8 +44,10 @@ export default function ToursPage() {
     }, []);
 
   useEffect(() => {
+    setPage(0); 
     fetchTours(0, true);
   }, [filters]);
+
 
   const fetchTours = (pageNumber = 0, reset = false) => {
   setLoading(true);
