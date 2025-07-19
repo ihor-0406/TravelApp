@@ -9,10 +9,11 @@ import '../styles/Navbar.css'
 const NavBar = () => {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [avatarUrl, setAvatarUrl] = useState(
-    "https://cdn-icons-png.flaticon.com/512/149/149071.png"
-  );
-const [role, setRole] = useState(null);
+  const [avatarUrl, setAvatarUrl] = useState("https://cdn-icons-png.flaticon.com/512/149/149071.png" );
+  const [role, setRole] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+
 
   useEffect(() => {
   axios
@@ -32,6 +33,8 @@ const [role, setRole] = useState(null);
       setIsLoggedIn(false);
       setAvatarUrl("https://cdn-icons-png.flaticon.com/512/149/149071.png");
       setRole(null);
+    })
+    .finally(() => { setLoading(false);
     });
 }, []);
 
@@ -89,53 +92,54 @@ const [role, setRole] = useState(null);
               </Link>
             </li>
           </ul>
+{loading ? (
+  null // или спиннер, или ничего
+) : isLoggedIn ? (
+  <div className="dropdown ms-auto">
+    <Link
+      to={"/profile"}
+      className="d-block link-body-emphasis text-decoration-none dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-expanded="false"
+    >
+      <img
+        src={avatarUrl}
+        alt="avatar"
+        width="55"
+        height="55"
+        className="rounded-circle border border-3 me-3"
+      />
+    </Link>
+    <ul className="dropdown-menu dropdown-menu-end text-small">
+      <li>
+        {role === "ADMIN" ? (
+          <Link className="dropdown-item inter-medium " to="/admin">Admin Panel</Link>
+        ) : (
+          <Link className="dropdown-item inter-medium " to="/profile">Profile</Link>
+        )}
+      </li>
+      <li><hr className="dropdown-divider" /></li>
+      <li>
+        <button
+          className="dropdown-item inter-medium "
+          onClick={handleLogout}
+        >
+          Logout
+        </button>
+      </li>
+    </ul>
+  </div>
+) : (
+  <ul className="navbar-nav ms-auto text-end">
+    <li className="nav-item">
+      <Link className="nav-link text-white paytone-one-regular" to="/login">
+        Sign in
+      </Link>
+    </li>
+  </ul>
+)}
 
-          {!isLoggedIn ? (
-            <ul className="navbar-nav ms-auto  text-end">
-              <li className="nav-item">
-                <Link className="nav-link text-white paytone-one-regular" to="/login">
-                  Sign in
-                </Link>
-              </li>
-            </ul>
-          ) : (
-            <div className="dropdown  ms-auto">
-              <Link
-                to={"/profile"}
-                className="d-block link-body-emphasis text-decoration-none dropdown-toggle"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
-                <img
-                  src={avatarUrl}
-                  alt="avatar"
-                  width="55"
-                  height="55"
-                  className="rounded-circle border border-3 me-3"
-                />
-              </Link>
-              <ul className="dropdown-menu dropdown-menu-end text-small">
-                <li>
-                 {role === "ADMIN" ? (
-                  <Link className="dropdown-item inter-medium " to="/admin">Admin Panel</Link>
-                ) : (
-                <Link className="dropdown-item inter-medium " to="/profile">Profile</Link>
-                )}
-                </li>
-                <li>
-                  <hr className="dropdown-divider" />
-                </li>
-                <li>
-                  <button
-                    className="dropdown-item inter-medium "
-                    onClick={handleLogout}
-                  >
-                    Logout
-                  </button>
-                </li>
-              </ul>
-            </div>
-          )}
+
         </div>
       </div>
     </nav>
