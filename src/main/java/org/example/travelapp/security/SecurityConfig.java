@@ -79,11 +79,14 @@ public class SecurityConfig {
                 )
                 .logout(logout -> logout
                         .logoutUrl("/api/auth/logout")
-                        .logoutSuccessUrl(frontendUrl + "/")
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID")
+                        .logoutSuccessHandler((request, response, authentication) -> {
+                            response.setStatus(200);
+                        })
                         .permitAll()
                 )
+
                 .securityContext(ctx -> ctx.requireExplicitSave(true))
                 .build();
 
