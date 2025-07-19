@@ -1,20 +1,23 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import logo from "../image/Logo.png";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
-import '../styles/Navbar.css'
+import "../styles/Navbar.css";
+import { AuthContext } from "../context/AuthContext";
 
 const NavBar = () => {
   const navigate = useNavigate();
+  const { account, setAccount } = useContext(AuthContext); 
+  const isLoading = account === undefined;
   const isLoggedIn = !!account;
+
   const avatarUrl = account?.avatarUrl?.trim()
     ? account.avatarUrl
     : "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+
   const role = account?.role;
-
-
 
   const handleLogout = () => {
     axios
@@ -29,8 +32,8 @@ const NavBar = () => {
   };
 
   return (
-    <nav className="navbar navbar-expand-lg bg-transparent border-bottom ">
-      <div className="container-fluid  ">
+    <nav className="navbar navbar-expand-lg bg-transparent border-bottom">
+      <div className="container-fluid">
         <Link className="navbar-brand" to="/">
           <img src={logo} alt="logo" />
         </Link>
@@ -45,9 +48,9 @@ const NavBar = () => {
         >
           <span className="navbar-toggler-icon" />
         </button>
-        <div className="collapse navbar-collapse " id="navbarNav">
+        <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav mx-auto">
-            <li className="nav-item ">
+            <li className="nav-item">
               <Link className="nav-link active text-white paytone-one-regular" to="/">
                 Home
               </Link>
@@ -68,7 +71,8 @@ const NavBar = () => {
               </Link>
             </li>
           </ul>
-              {!isLoading && (
+
+          {!isLoading && (
             isLoggedIn ? (
               <div className="dropdown ms-auto">
                 <Link

@@ -8,4 +8,5 @@ import org.springframework.data.domain.Pageable;
 
 public interface TourFilterRepository {
     Page<Tour> filterTours(TourFilterRequstDto request, Pageable pageable);
+
 }

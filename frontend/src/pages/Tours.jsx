@@ -44,10 +44,12 @@ export default function ToursPage() {
     }, []);
 
   useEffect(() => {
-      setTours([]);   
-      setPage(0);   
+      setTours([]);
       setHasMore(true);
+      fetchTours(0); 
+      setPage(0);   
     }, [filters]);
+
 
     useEffect(() => {
       fetchTours(page);
