@@ -19,6 +19,19 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 import "./App.css";
 
 function AppRoutes() {
+useEffect(() => {
+  axios.get('/api/auth/user')
+    .then((res) => {
+      console.log("User is authenticated", res.data);
+      setUser(res.data); 
+    })
+    .catch((err) => {
+      console.log("Not authenticated");
+      setUser(null);
+    });
+}, []);
+
+
   return (
     <Routes>
       <Route path="/" element={<Home />} />
@@ -43,7 +56,7 @@ export default function App() {
 
   useEffect(() => {
     axios
-      .get("/api/profile", { withCredentials: true })
+      .get("/api/auth/user", { withCredentials: true })
       .then((res) => setAccount(res.data))
       .catch(() => setAccount(null))
       .finally(() => setIsLoading(false));

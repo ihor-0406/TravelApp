@@ -155,4 +155,23 @@ public class AuthController {
         return ResponseEntity.ok("Password reset successful");
 
     }
+
+    @GetMapping("/user")
+    public ResponseEntity<?> getCurrentUser(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()
+                || authentication.getPrincipal().equals("anonymousUser")) {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+
+        String email = authentication.getName();
+        Account account = accountRepository.findByEmail(email)
+                .orElse(null);
+
+        if (account == null) {
+            return ResponseEntity.status(404).body("Account not found");
+        }
+
+        return ResponseEntity.ok(account);
+    }
+
 }
