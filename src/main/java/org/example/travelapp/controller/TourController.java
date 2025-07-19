@@ -46,7 +46,7 @@ public class TourController {
     private final AccountService accountService;
 
     @GetMapping
-    public ResponseEntity<List<TourDto>> getAllTour(@PageableDefault(size = 50) Pageable pageable) {
+    public ResponseEntity<List<TourDto>> getAllTour(@PageableDefault(size = 9) Pageable pageable) {
         Page<Tour> tours = tourService.findAll(pageable);
 
         List<TourDto> dtos = tours.getContent().stream()
@@ -58,7 +58,7 @@ public class TourController {
 
     @PostMapping("/filter")
     public ResponseEntity<Page<TourDto>> filterTours(@RequestBody TourFilterRequstDto filters,
-                                                     @PageableDefault(size = 50) Pageable pageable) {
+                                                     @PageableDefault(size = 9) Pageable pageable) {
         System.out.println("Received filter request: " + filters);
         Page<Tour> result = tourService.filterTours(filters, pageable);
 
