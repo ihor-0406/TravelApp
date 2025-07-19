@@ -17,13 +17,11 @@ const NavBar = () => {
 
 
   const handleLogout = () => {
-    fetch("/api/auth/logout", {
-      method: "POST",
-      credentials: "include",
-    })
+    axios
+      .post("/api/auth/logout", {}, { withCredentials: true })
       .then(() => {
+        setAccount(null);
         navigate("/");
-        window.location.reload(); 
       })
       .catch((err) => {
         console.error("Logout failed:", err);

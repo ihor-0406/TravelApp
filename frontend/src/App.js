@@ -41,7 +41,7 @@ export default function App() {
 
   useEffect(() => {
     axios
-      .get("/api/profile", { withCredentials: true })
+      .get("/api/auth/user", { withCredentials: true })
       .then((res) => {
         if (res.data?.email && res.data.email !== "anonymousUser") {
           setAccount(res.data);
