@@ -19,7 +19,6 @@ import java.util.Optional;
 public class TourService {
 
     private final TourRepository tourRepository;
-    private final TourFilterRepository tourFilterRepository;
     private final AccountRepository accountRepository;
     private final DiscountRepository discountRepository;
 
@@ -71,6 +70,7 @@ public class TourService {
     }
 
     public Page<Tour> filterTours(TourFilterRequstDto request, Pageable pageable) {
-        return tourFilterRepository.filterTours(request, pageable);
+        return tourRepository.filterTours(request, pageable);
     }
+
 }
