@@ -84,6 +84,7 @@ public class SecurityConfig {
                         .deleteCookies("JSESSIONID")
                         .permitAll()
                 )
+                .securityContext(ctx -> ctx.requireExplicitSave(true))
                 .build();
 
     }
