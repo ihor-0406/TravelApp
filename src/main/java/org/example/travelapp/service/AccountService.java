@@ -59,13 +59,20 @@ public class AccountService {
     }
 
     public Optional<Account> getCurrentAccount() {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (principal instanceof UserDetails) {
-            String email = ((UserDetails) principal).getUsername();
-            return accountRepository.findByEmail(email);
-        } else {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()
+                || authentication.getPrincipal().equals("anonymousUser")) {
             return Optional.empty();
         }
+
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof UserDetails userDetails) {
+            String email = userDetails.getUsername();
+            return accountRepository.findByEmail(email);
+        }
+
+        return Optional.empty();
     }
 
 
