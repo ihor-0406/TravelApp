@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-// import NavBar from '../components/NavBar';
+import NavBar from '../components/NavBar';
 import TourCard from '../components/TourCard';
 import { Breadcrumb, Offcanvas } from 'react-bootstrap';
 import '../styles/Tour.css';
@@ -99,7 +99,7 @@ export default function ToursPage() {
   return (
     <>
       <header className="tourBackraund">
-        {/* <NavBar /> */}
+        <NavBar />
          <div className="mt-3">
              <nav style={{ ['--bs-breadcrumb-divider']: "'>'" }} aria-label="breadcrumb">
               <ol className="breadcrumb mt-2">

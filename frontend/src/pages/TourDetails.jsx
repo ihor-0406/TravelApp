@@ -129,7 +129,7 @@ useEffect(() => {
           src={tour.imageUrl || "https://via.placeholder.com/800x400"}
           className="img-fluid rounded-4 shadow"
           alt={tour.title}
-          style={{ objectFit: 'cover', width: '100%', maxHeight: '400px' }}
+          style={{ objectFit: 'cover', width: '100%', maxHeight: '400px', position: 'center' }}
         />
       </div>
     </div>

@@ -70,7 +70,6 @@ export default function App() {
 
   return (
     <Router>
-      <NavBar account={account} isLoading={isLoading} />
         <AppRoutes account={account} setAccount={setAccount} />
     </Router>
   );
