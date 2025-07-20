@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 
 import 'react-calendar/dist/Calendar.css';
 import axios from 'axios';
-// import NavBar from '../components/NavBar';
+import NavBar from '../components/NavBar';
 // import ReviewCarousel from '../components/ReviewCarousel';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar as solidStar } from '@fortawesome/free-solid-svg-icons';
@@ -95,7 +95,7 @@ useEffect(() => {
   return (
     <>
     <header className='tourDetailsBackraund'>
-        {/* <NavBar /> */}
+        <NavBar />
          <div className="mt-3">
              <nav  style={{ ['--bs-breadcrumb-divider']: "'>'" }} aria-label="breadcrumb">
               <ol className="breadcrumb mt-2">
@@ -206,14 +206,27 @@ useEffect(() => {
           <div className="border border-dark rounded-4 p-4 shadow-sm">
             <h5 className='paytone-one-regular p-2'>Select a Date</h5>
             <Calendar onChange={setDate} value={date} locale="en-US" className="mb-4 rounded-4 bg-secondary-subtle"/>
-            <div className="mb-3">
-              <label className="form-label fw-bold">Number of People</label>
-              <div className="d-flex align-items-center p-2">
-                <button onClick={decrementPeople} className="btn btn-outline-secondary rounded-circle me-2"><i className="fa-solid fa-chevron-left"></i></button>
-                <span className="px-2 fw-bold">{people}</span>
-                <button onClick={incrementPeople} className="btn btn-outline-secondary rounded-circle ms-2"><i className="fa-solid fa-chevron-right"></i></button>
-              </div>
+         <div className="mb-3">
+            <label className="form-label fw-bold">Number of People</label>
+            <div className="d-flex align-items-center p-2">
+              <button
+                type="button"
+                onClick={() => setPeople((prev) => (prev > 1 ? prev - 1 : 1))}
+                className="btn btn-outline-secondary rounded-circle me-2"
+              >
+                <i className="fa-solid fa-chevron-left"></i>
+              </button>
+              <span className="px-3 fw-bold">{people}</span>
+              <button
+                type="button"
+                onClick={() => setPeople((prev) => prev + 1)}
+                className="btn btn-outline-secondary rounded-circle ms-2"
+              >
+                <i className="fa-solid fa-chevron-right"></i>
+              </button>
             </div>
+          </div>
+
             
             <div className="d-flex align-items-center gap-2">
               {tour.discountValue && tour.discountPrice && tour.discountValue > 0 ? (
