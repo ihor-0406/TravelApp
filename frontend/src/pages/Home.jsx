@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react'
 import '../styles/Home.css' 
-import NavBar from '../components/NavBar'
+// import NavBar from '../components/NavBar'
 import image1 from '../image/1.jpg';
 import image2  from '../image/2.jpg';
 import image3 from '../image/image3.jpg';
@@ -22,7 +22,7 @@ const Home = () => {
   return (
     <>
     <header className='icelandBackgraund'>
-      <NavBar/>
+      {/* <NavBar/> */}
 
       <div className=' d-flex justify-content-center align-items-center flex-column '>
         <div className='textFollow '>

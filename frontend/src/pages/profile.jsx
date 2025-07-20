@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import NavBar from '../components/NavBar';
+// import NavBar from '../components/NavBar';
 import ProfileTabs from '../components/ProfileTabs';
 import ProfileInfo from '../components/ProfileInfo';
 import ProfileBookings from '../components/ProfileBookings';
@@ -126,7 +126,7 @@ export default function Profile() {
   return (
     <>
       <header className='bgnProfile'>
-        <NavBar />
+        {/* <NavBar /> */}
       </header>
       <div className="min-vh-100 bg-light">
         <div className="container py-4" style={{ maxWidth: 800 }}>

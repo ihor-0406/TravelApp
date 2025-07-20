@@ -18,11 +18,28 @@ You can test the application using the following demo accounts:
 
 > These accounts are automatically created on application startup if they don't already exist.
 
+
+## Test Payment Cards
+
+To simulate payments in the application, use the following test credit card numbers (any future expiration date and any CVC code will work):
+
+| Card Type              | Number               |
+|------------------------|----------------------|
+| Visa                   | `4242 4242 4242 4242` |
+| Visa (debit)           | `4000 0566 5566 5556` |
+| Mastercard             | `5555 5555 5555 4444` |
+| Mastercard (2-series)  | `2223 0031 2200 3222` |
+| American Express       | `3782 822463 10005`   |
+| Discover               | `6011 1111 1111 1117` |
+
+
 ## Live Demo
 
 The application is deployed on Heroku and can be accessed here:
 
 🔗 [https://travel-app01-04b23cb7210b.herokuapp.com/](https://travel-app01-04b23cb7210b.herokuapp.com/)
+
+
 
 ## Features
 
@@ -60,6 +77,19 @@ The application is deployed on Heroku and can be accessed here:
     - Пароль: `User123!`
 
 > Эти аккаунты создаются автоматически при первом запуске приложения, если они отсутствуют в базе данных.
+
+## Тестовые карты для оплаты
+
+Для симуляции платежей используйте следующие тестовые номера кредитных карт (подойдут любые будущие даты и CVC):
+
+| Тип карты                   | Номер                    |
+|-----------------------------|--------------------------|
+| Visa                        | `4242 4242 4242 4242`    |
+| Visa (debit)                | `4000 0566 5566 5556`    |
+| Mastercard                  | `5555 5555 5555 4444`    |
+| Mastercard (2-series)       | `2223 0031 2200 3222`    |
+| American Express            | `3782 822463 10005`      |
+| Discover                    | `6011 1111 1111 1117`    |
 
 ## Живая демонстрация
 

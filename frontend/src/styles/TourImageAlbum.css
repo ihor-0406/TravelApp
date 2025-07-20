@@ -1,0 +1,12 @@
+.tour-image-album img {
+  border-radius: 1rem;
+  width: 100%;
+  object-fit: cover;
+  max-height: 500px;
+}
+
+@media (max-width: 768px) {
+  .tour-image-album img {
+    max-height: 300px;
+  }
+}

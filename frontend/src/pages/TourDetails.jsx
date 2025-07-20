@@ -6,8 +6,8 @@ import { Link } from 'react-router-dom';
 
 import 'react-calendar/dist/Calendar.css';
 import axios from 'axios';
-import NavBar from '../components/NavBar';
-import ReviewCarousel from '../components/ReviewCarousel';
+// import NavBar from '../components/NavBar';
+// import ReviewCarousel from '../components/ReviewCarousel';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar as solidStar } from '@fortawesome/free-solid-svg-icons';
 import { faStar as regularStar } from '@fortawesome/free-regular-svg-icons';
@@ -95,7 +95,7 @@ useEffect(() => {
   return (
     <>
     <header className='tourDetailsBackraund'>
-        <NavBar />
+        {/* <NavBar /> */}
          <div className="mt-3">
              <nav  style={{ ['--bs-breadcrumb-divider']: "'>'" }} aria-label="breadcrumb">
               <ol className="breadcrumb mt-2">

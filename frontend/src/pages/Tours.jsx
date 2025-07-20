@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import NavBar from '../components/NavBar';
+// import NavBar from '../components/NavBar';
 import TourCard from '../components/TourCard';
 import { Breadcrumb, Offcanvas } from 'react-bootstrap';
 import '../styles/Tour.css';
@@ -44,40 +44,35 @@ export default function ToursPage() {
     }, []);
 
   useEffect(() => {
-      setTours([]);
-      setHasMore(true);
-      fetchTours(0); 
-      setPage(0);   
-    }, [filters]);
+    setTours([]);
+    setHasMore(true);
+    setPage(0); 
+  }, [filters]);
 
-
-    useEffect(() => {
-      fetchTours(page);
-    }, [page]);
+  useEffect(() => {
+    fetchTours(page);
+  }, [page]);
 
   const fetchTours = (pageNumber = 0) => {
-  setLoading(true);
+    setLoading(true);
 
-  fetch(`/api/tours/filter?page=${pageNumber}&size=${size}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(filters),
-  })
-    .then(res => res.ok ? res.json() : Promise.reject("Server Error"))
-    .then(data => {
-      if (!data || !Array.isArray(data.content)) throw new Error("Invalid response");
-
-      setTours(prev => pageNumber === 0 ? data.content : [...prev, ...data.content]);
-      setHasMore(!data.last);
-      setLoading(false);
+    fetch(`/api/tours/filter?page=${pageNumber}&size=${size}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(filters),
     })
-    .catch(err => {
-      console.error("Error:", err);
-      setLoading(false);
-    });
-};
-
-
+      .then(res => res.ok ? res.json() : Promise.reject("Server Error"))
+      .then(data => {
+        if (!data || !Array.isArray(data.content)) throw new Error("Invalid response");
+        setTours(prev => pageNumber === 0 ? data.content : [...prev, ...data.content]);
+        setHasMore(!data.last);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error("Error:", err);
+        setLoading(false);
+      });
+  };
 
   const toggleFilter = (key, value) => {
     setFilters(prev => {
@@ -96,17 +91,15 @@ export default function ToursPage() {
       maxPeople: [],
       difficulty: [],
       availability: [],
-      // ratings: [],
       minPrice: 50,
       maxPrice: 500,
       sortBy: '',
     });
   };
-
   return (
     <>
       <header className="tourBackraund">
-        <NavBar />
+        {/* <NavBar /> */}
          <div className="mt-3">
              <nav style={{ ['--bs-breadcrumb-divider']: "'>'" }} aria-label="breadcrumb">
               <ol className="breadcrumb mt-2">
