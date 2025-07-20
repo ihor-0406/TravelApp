@@ -83,11 +83,7 @@ export default function Footer() {
             </ul>
           </div>
         </div>
-        <hr className="border-top border-light opacity-50 my-4" />
-        <div className="d-flex justify-content-between flex-column flex-md-row">
-          <p className="inter-very-small">Designed by Marina Danilenka</p>
-          <p className="inter-very-small ">© Copyright 2025</p>
-        </div>
+
       </div>
     </footer>
   );

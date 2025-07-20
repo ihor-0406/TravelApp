@@ -13,10 +13,25 @@ import TourDetails from "./pages/TourDetails.jsx";
 import Success from "./pages/Success.jsx";
 import Unauthorized from "./pages/Unauthorized.jsx";
 import AdminPanel from "./components/AdminPanel";
-import NavBar from "./components/NavBar";
+import NavBar from "./components/NavBar.jsx";
 import axios from "axios";
+import "@fortawesome/fontawesome-free/css/all.min.css";
+import "./App.css";
 
-function AppRoutes({ account }) {
+function AppRoutes({ account, setAccount }) {
+useEffect(() => {
+  axios.get('/api/auth/user')
+    .then((res) => {
+      console.log("User is authenticated", res.data);
+        setAccount(res.data);
+    })
+    .catch((err) => {
+      console.log("Not authenticated");
+        setAccount(null);
+    });
+}, []);
+
+
   return (
     <Routes>
       <Route path="/" element={<Home />} />
@@ -25,12 +40,12 @@ function AppRoutes({ account }) {
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/oauth2/callback" element={<OAuthCallback />} />
-      <Route path="/profile" element={<Profile account={account} />} />
+      <Route path="/profile" element={<Profile />} />
       <Route path="/tours" element={<Tours />} />
       <Route path="/tours/:id" element={<TourDetails />} />
       <Route path="/success" element={<Success />} />
       <Route path="/unauthorized" element={<Unauthorized />} />
-      <Route path="/admin" element={<AdminPanel account={account} />} />
+      <Route path="/admin" element={<AdminPanel />} />
     </Routes>
   );
 }
@@ -56,7 +71,7 @@ export default function App() {
   return (
     <Router>
       <NavBar account={account} isLoading={isLoading} />
-      <AppRoutes account={account} />
+        <AppRoutes account={account} setAccount={setAccount} />
     </Router>
   );
 }
