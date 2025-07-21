@@ -28,24 +28,25 @@ export default function EnterEmail() {
   };
 
   return (
-    <div className="container mt-5  ">
-        <div className='d-flex justify-content-between flex-column align-items-center'>
-            <h2>Please enter your email to complete login</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="email"
-          className="form-control my-4 px-5 rounded-pill"
-          placeholder="Enter your email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-       
-      </form> 
-      <button className="btn btn-outline-dark rounded-pill ">Confirm</button>
-        </div>
-      
-      {error && <p className="text-danger mt-2">{error}</p>}
+    <div className="container mt-5">
+      <div className="d-flex flex-column align-items-center">
+        <h2>Please enter your email to complete login</h2>
+        <form onSubmit={handleSubmit} className="w-100 d-flex flex-column align-items-center">
+          <input
+            type="email"
+            className="form-control my-4 px-5 rounded-pill"
+            placeholder="Enter your email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            style={{ maxWidth: '400px' }}
+          />
+          <button type="submit" className="btn btn-outline-dark rounded-pill">
+            Confirm
+          </button>
+        </form>
+        {error && <p className="text-danger mt-2">{error}</p>}
+      </div>
     </div>
   );
 }
