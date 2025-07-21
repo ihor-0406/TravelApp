@@ -6,7 +6,6 @@ import org.example.travelapp.model.Account;
 import org.example.travelapp.model.Gender;
 import org.example.travelapp.model.Role;
 import org.example.travelapp.repository.AccountRepository;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -23,8 +22,6 @@ public class AuthHandler implements AuthenticationSuccessHandler {
 
     private final AccountRepository accountRepository;
 
-    @Value("${frontend.url}")
-    private String frontendUrl;
 
     public AuthHandler(AccountRepository accountRepository) {
         this.accountRepository = accountRepository;
@@ -66,7 +63,8 @@ public class AuthHandler implements AuthenticationSuccessHandler {
             accountRepository.save(account);
         }
 
-        response.sendRedirect(frontendUrl + "/profile");
+        response.sendRedirect("https://travel-app01-04b23cb7210b.herokuapp.com/profile");
+
     }
 
 }

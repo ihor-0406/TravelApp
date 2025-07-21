@@ -67,7 +67,7 @@ public class SecurityConfig {
                 .exceptionHandling(ex -> ex.accessDeniedHandler(accessDeniedHandler))
                 .oauth2Login(oauth2 -> oauth2
                                 .loginPage("/login")
-                        .successHandler(authenticationSuccessHandler)
+                        .successHandler(authHandler)
 
                 )
                 .formLogin(form -> form
@@ -113,6 +113,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOriginPatterns(List.of("*"));
         configuration.setAllowedOrigins(List.of(frontendUrl));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
