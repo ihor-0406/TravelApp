@@ -64,6 +64,11 @@ public class AuthController {
         return ResponseEntity.ok(new LoginResponse("Login successful", avatarUrl));
     }
 
+    @GetMapping("/login-error")
+    public String loginError() {
+        return "redirect:https://travel-app01-04b23cb7210b.herokuapp.com/unauthorized";
+    }
+
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request) {
         if (accountRepository.findByEmail(request.getEmail()).isPresent()) {

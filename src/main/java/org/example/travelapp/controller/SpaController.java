@@ -10,7 +10,7 @@ public class SpaController {
 
 
     @RequestMapping(value = {
-            "/",
+            "/", "/login", "/unauthorized",
             "/{path:^(?!api|static|uploads|favicon\\.ico|login|logout|oauth2|auth|error|actuator|.*\\..*).*$}",
             "/**/{path:^(?!api|static|uploads|favicon\\.ico|login|logout|oauth2|auth|error|actuator|.*\\..*).*$}"
     })
