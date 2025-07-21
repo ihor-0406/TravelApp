@@ -56,7 +56,7 @@ public class TourFilterRepositoryImpl implements TourFilterRepository {
 
         cq.where(cb.and(predicates.toArray(new Predicate[0])));
 
-        if (if (filter.getSortBy() != null && !filter.getSortBy().isBlank()) {
+        if (filter.getSortBy() != null && !filter.getSortBy().isBlank()) {
             switch (filter.getSortBy()) {
                 case "priceAsc" -> cq.orderBy(cb.asc(root.get("price")));
                 case "priceDesc" -> cq.orderBy(cb.desc(root.get("price")));
