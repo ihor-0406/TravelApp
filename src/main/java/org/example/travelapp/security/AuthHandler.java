@@ -30,41 +30,40 @@ public class AuthHandler implements AuthenticationSuccessHandler {
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response,
-                                        Authentication authentication) throws IOException{
+                                        Authentication authentication) throws IOException {
         OAuth2AuthenticationToken token = (OAuth2AuthenticationToken) authentication;
         OAuth2User user = token.getPrincipal();
-
         Map<String, Object> attributes = user.getAttributes();
-        String email = (String) attributes.get("email");
 
+        String email = (String) attributes.get("email");
         Optional<Account> existion = accountRepository.findByEmail(email);
-        if(existion.isEmpty()){
+
+        if (existion.isEmpty()) {
             Account account = new Account();
             account.setEmail(email);
             account.setPasswordHash("OAUTH2_USER");
-            account.setFirstName((String) attributes.get("given_name"));
-            account.setLastName((String) attributes.get("family_name"));
-            account.setAvatarUrl((String) attributes.get("picture"));
             account.setRole(Role.USER);
             account.setRegistrationDate(LocalDate.now());
 
-            Object genderAttr = attributes.get("gender");
-            if (genderAttr != null){
-                try{
-                    Gender gender = Gender.valueOf(genderAttr.toString().toUpperCase());
-                    account.setGender(gender);
-                }catch (IllegalArgumentException e){
-                    account.setGender(Gender.UNKNOWN);
-                }
-            }else {
-                account.setGender(Gender.UNKNOWN);
+            String registrationId = token.getAuthorizedClientRegistrationId();
+
+            if ("google".equals(registrationId)) {
+                account.setFirstName((String) attributes.get("given_name"));
+                account.setLastName((String) attributes.get("family_name"));
+                account.setAvatarUrl((String) attributes.get("picture"));
+            } else if ("facebook".equals(registrationId)) {
+                account.setFirstName((String) attributes.get("name"));
+                account.setLastName("Facebook");
+                account.setAvatarUrl("https://graph.facebook.com/" + attributes.get("id") + "/picture?type=large");
             }
+
+            account.setGender(Gender.UNKNOWN);
 
             accountRepository.save(account);
         }
 
         response.sendRedirect("https://travel-app01-04b23cb7210b.herokuapp.com/profile");
-
     }
+
 
 }
