@@ -47,6 +47,8 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/auth/**",
                                 "/login",
+                                "/login/oauth2/**",
+                                "/oauth2/**",
                                 "/register",
                                 "/forgot-password",
                                 "/reset-password",
@@ -63,7 +65,7 @@ public class SecurityConfig {
                                 "/api/profile/**").authenticated()
                         .anyRequest().permitAll() //
                 )
-                .anonymous(AnonymousConfigurer::disable)
+//                .anonymous(AnonymousConfigurer::disable)
                 .exceptionHandling(ex -> ex.accessDeniedHandler(accessDeniedHandler))
                 .oauth2Login(oauth2 -> oauth2
                                 .loginPage("/login")
@@ -113,7 +115,6 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(List.of("*"));
         configuration.setAllowedOrigins(List.of(frontendUrl));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
