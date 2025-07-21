@@ -27,8 +27,9 @@ public class TourService {
     }
 
     public Optional<Tour> findById(Long id) {
-        return tourRepository.findById(id);
+        return tourRepository.findByIdWithDiscounts(id);
     }
+
 
     public Tour create(TourCreateRequestDto dto, String createdByEmail) {
         Account account = accountRepository.findByEmail(createdByEmail)

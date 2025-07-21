@@ -10,9 +10,9 @@ public class SpaController {
 
 
     @RequestMapping(value = {
-            "/",                        // Главная
-            "/{path:^(?!api|static|uploads|favicon\\.ico|.*\\..*).*$}",
-            "/**/{path:^(?!api|static|uploads|favicon\\.ico|.*\\..*).*$}"
+            "/",
+            "/{path:^(?!api|static|uploads|favicon\\.ico|login|logout|oauth2|auth|error|actuator|.*\\..*).*$}",
+            "/**/{path:^(?!api|static|uploads|favicon\\.ico|login|logout|oauth2|auth|error|actuator|.*\\..*).*$}"
     })
     public String redirectToIndex() {
         return "forward:/index.html";
