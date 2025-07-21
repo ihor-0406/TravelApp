@@ -35,7 +35,17 @@ public class AuthHandler implements AuthenticationSuccessHandler {
         OAuth2User user = token.getPrincipal();
         Map<String, Object> attributes = user.getAttributes();
 
+        String registrationId = token.getAuthorizedClientRegistrationId();
         String email = (String) attributes.get("email");
+
+        if (email == null || email.isBlank()) {
+            request.getSession().setAttribute("oauth_name", (String) attributes.get("name"));
+            request.getSession().setAttribute("oauth_id", (String) attributes.get("id"));
+            request.getSession().setAttribute("oauth_provider", registrationId);
+            response.sendRedirect("/enter-email");
+            return;
+        }
+
         Optional<Account> existion = accountRepository.findByEmail(email);
 
         if (existion.isEmpty()) {
@@ -44,8 +54,7 @@ public class AuthHandler implements AuthenticationSuccessHandler {
             account.setPasswordHash("OAUTH2_USER");
             account.setRole(Role.USER);
             account.setRegistrationDate(LocalDate.now());
-
-            String registrationId = token.getAuthorizedClientRegistrationId();
+            account.setGender(Gender.UNKNOWN);
 
             if ("google".equals(registrationId)) {
                 account.setFirstName((String) attributes.get("given_name"));
@@ -56,8 +65,6 @@ public class AuthHandler implements AuthenticationSuccessHandler {
                 account.setLastName("Facebook");
                 account.setAvatarUrl("https://graph.facebook.com/" + attributes.get("id") + "/picture?type=large");
             }
-
-            account.setGender(Gender.UNKNOWN);
 
             accountRepository.save(account);
         }

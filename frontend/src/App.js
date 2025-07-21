@@ -17,6 +17,7 @@ import NavBar from "./components/NavBar.jsx";
 import axios from "axios";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "./App.css";
+import EnterEmail from "./pages/EnterEmail.jsx";
 
 function AppRoutes({ account, setAccount }) {
 useEffect(() => {
@@ -46,6 +47,7 @@ useEffect(() => {
       <Route path="/success" element={<Success />} />
       <Route path="/unauthorized" element={<Unauthorized />} />
       <Route path="/admin" element={<AdminPanel />} />
+      <Route path="/enter-email" element={<EnterEmail />} />
     </Routes>
   );
 }
