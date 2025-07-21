@@ -73,12 +73,13 @@ const Login = () => {
             <button type="submit" className="login-btn">Sign in</button>
 
             <div className="social-buttons">
-              <a href="https://travel-app01-04b23cb7210b.herokuapp.com/login/oauth2/code/google" className="social-btn google">
+              <a href="https://travel-app01-04b23cb7210b.herokuapp.com/oauth2/authorization/google" className="social-btn google">
                 <i className="fab fa-google"></i> Continue with Google
               </a>
-              <a href="https://travel-app01-04b23cb7210b.herokuapp.com/login/oauth2/code/facebook" className="social-btn facebook">
-               <i className="fab fa-facebook-f"></i> Continue with Facebook </a>
-            </div>
+              <a href="https://travel-app01-04b23cb7210b.herokuapp.com/oauth2/authorization/facebook" className="social-btn facebook">
+               <i className="fab fa-facebook-f"></i> Continue with Facebook
+              </a>
+          </div>
             <div className="bottom-links">
               <button type="button" onClick={() => navigate('/register')}>Sign up</button>
               <button type="button" onClick={() => navigate('/')}>Back</button>
