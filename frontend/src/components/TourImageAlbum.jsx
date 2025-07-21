@@ -46,7 +46,7 @@ export default function TourImageAlbum({ tourId }) {
               className="img-fluid rounded"
               style={{
                 width: '100%',
-                maxHeight: '500px',
+                maxHeight: '700px',
                 objectFit: 'cover',
               }}
             />

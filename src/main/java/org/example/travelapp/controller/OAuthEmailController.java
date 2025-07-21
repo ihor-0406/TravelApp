@@ -1,19 +1,19 @@
 package org.example.travelapp.controller;
 
-import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.example.travelapp.model.Account;
 import org.example.travelapp.model.Gender;
 import org.example.travelapp.model.Role;
 import org.example.travelapp.repository.AccountRepository;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.Map;
+import java.util.Collections;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,41 +22,41 @@ public class OAuthEmailController {
     private final AccountRepository accountRepository;
 
     @PostMapping("/enter-email")
-    public ResponseEntity<?> enterEmail(@RequestBody Map<String, String> request, HttpSession session) {
-        String email = request.get("email");
+    public ResponseEntity<?> completeOAuthLogin(@RequestBody EmailRequest request, HttpServletRequest session) {
 
-        if (email == null || email.isBlank()) {
+        String name = (String) session.getSession().getAttribute("oauth_name");
+        String id = (String) session.getSession().getAttribute("oauth_id");
+        String provider = (String) session.getSession().getAttribute("oauth_provider");
+
+        if (request.getEmail() == null || request.getEmail().isBlank()) {
             return ResponseEntity.badRequest().body("Email is required");
         }
 
-        if (accountRepository.findByEmail(email).isPresent()) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Email already exists");
+        if (accountRepository.findByEmail(request.getEmail()).isPresent()) {
+            return ResponseEntity.status(409).body("User already exists");
         }
-
-        String name = (String) session.getAttribute("oauth_name");
-        String provider = (String) session.getAttribute("oauth_provider");
-        String id = (String) session.getAttribute("oauth_id");
-
-        if (name == null || provider == null || id == null) {
-            return ResponseEntity.badRequest().body("Session expired or invalid");
-        }
-
         Account account = new Account();
-        account.setEmail(email);
+        account.setEmail(request.getEmail());
+        account.setFirstName(name);
+        account.setLastName(provider.equals("facebook") ? "Facebook" : provider);
+        account.setAvatarUrl("https://graph.facebook.com/" + id + "/picture?type=large");
         account.setPasswordHash("OAUTH2_USER");
         account.setRole(Role.USER);
-        account.setRegistrationDate(LocalDate.now());
         account.setGender(Gender.UNKNOWN);
-        account.setFirstName(name);
-        account.setLastName(provider);
-        account.setAvatarUrl("https://graph.facebook.com/" + id + "/picture?type=large");
+        account.setRegistrationDate(LocalDate.now());
 
         accountRepository.save(account);
 
-        session.removeAttribute("oauth_name");
-        session.removeAttribute("oauth_provider");
-        session.removeAttribute("oauth_id");
+        UsernamePasswordAuthenticationToken authToken =
+                new UsernamePasswordAuthenticationToken(account, null,
+                        Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
+        SecurityContextHolder.getContext().setAuthentication(authToken);
 
-        return ResponseEntity.ok("Account created");
+        return ResponseEntity.ok().build();
+    }
+    public static class EmailRequest {
+        private String email;
+        public String getEmail() { return email; }
+        public void setEmail(String email) { this.email = email; }
     }
 }
