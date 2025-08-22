@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -145,8 +146,9 @@ public class AuthController {
 
     @PostMapping("/reset-password")
     public ResponseEntity<?> resetPassword(@RequestParam String token,
-                                           @RequestParam String newPassword) {
+                                           @RequestBody Map<String, String> body) {
 
+        String newPassword = body.get("password");
         Optional<Account> userOpt = passwordResetService.validateToken(token);
 
         if (userOpt.isEmpty()) {
@@ -156,10 +158,12 @@ public class AuthController {
         Account account = userOpt.get();
         account.setPasswordHash(passwordEncoder.encode(newPassword));
         accountRepository.save(account);
-        passwordResetService.clearToken(token);
-        return ResponseEntity.ok("Password reset successful");
 
+        passwordResetService.clearToken(token);
+
+        return ResponseEntity.ok("Password reset successful");
     }
+
 
     @GetMapping("/user")
     public ResponseEntity<?> getCurrentUser(Authentication authentication) {
