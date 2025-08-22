@@ -1,9 +1,8 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import NavBar from '../components/NavBar';
 import TourCard from '../components/TourCard';
 import { Offcanvas } from 'react-bootstrap';
 import '../styles/Tour.css';
-
 import Footer from '../components/Footer';
 
 const LOCATIONS = ['Reykjavík', 'Vik', 'Akureyri', 'Snæfellsnes', 'Húsavík'];
@@ -28,11 +27,9 @@ export default function ToursPage() {
     availability: [],
     minPrice: 50,
     maxPrice: 500,
-    // sortBy: '',
   });
 
   const [sortBy, setSortBy] = useState('');
-
   const [showFilters, setShowFilters] = useState(false);
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
@@ -41,68 +38,65 @@ export default function ToursPage() {
 
   const sortParam = useMemo(() => {
     switch (sortBy) {
-      case 'priceAsc':
-        return 'price,asc';
+      case 'priceAsc': 
+       return 'price,asc';
       case 'priceDesc':
-        return 'price,desc';
+         return 'price,desc';
       case 'alphaAsc':
-        return 'title,asc';
+          return 'title,asc';
       case 'alphaDesc':
-        return 'title,desc';  
-       default: return '';       
+         return 'title,desc';
+      default:         
+       return '';
     }
   }, [sortBy]);
 
- useEffect(() => {
-        document.title = 'Tours | Travellins';
-    }, []);
+  useEffect(() => { document.title = 'Tours | Travellins'; }, []);
+
+  const fetchTours = useCallback((pageNumber = 0) => {
+    setLoading(true);
+
+    const url =
+      `/api/tours/filter?page=${pageNumber}&size=${size}` +
+      (sortParam ? `&sort=${encodeURIComponent(sortParam)}` : '');
+
+    fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(filters),
+    })
+      .then(res => (res.ok ? res.json() : Promise.reject('Server Error')))
+      .then(data => {
+        if (!data || !Array.isArray(data.content)) throw new Error('Invalid response');
+        setTours(prev => (pageNumber === 0 ? data.content : [...prev, ...data.content]));
+        setHasMore(!data.last);
+      })
+      .catch(err => console.error('Error:', err))
+      .finally(() => setLoading(false));
+  }, [filters, sortParam, size]);
 
   useEffect(() => {
-    setTours([]);
-    setHasMore(true);
-    setPage(0); 
+    setTours([]); setHasMore(true);
+    if (page === 0) fetchTours(0); else setPage(0);
   }, [filters]);
 
-  useEffect(() =>{
-    setTours([]);
-    setHasMore(true);
-    setPage(0);
+  useEffect(() => {
+    setTours([]); setHasMore(true);
+    if (page === 0) fetchTours(0); else setPage(0);
   }, [sortBy]);
 
   useEffect(() => {
     fetchTours(page);
-  }, [page]);
-
-  const fetchTours = (pageNumber = 0) => {
-    setLoading(true);
-
-  const url =
-    `/api/tours/filter?page=${pageNumber}&size=${size}` +
-    (sortParam ? `&sort=${encodeURIComponent(sortParam)}` : '');
-
-  fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(filters),
-  })
-    .then(res => (res.ok ? res.json() : Promise.reject('Server Error')))
-    .then(data => {
-      if (!data || !Array.isArray(data.content)) throw new Error('Invalid response');
-      setTours(prev => (pageNumber === 0 ? data.content : [...prev, ...data.content]));
-      setHasMore(!data.last);
-    })
-    .catch(err => {
-      console.error('Error:', err);
-    })
-    .finally(() => setLoading(false));
-  };
+  }, [page, fetchTours]);
 
   const toggleFilter = (key, value) => {
     setFilters(prev => {
       const current = prev[key];
       return {
         ...prev,
-        [key]: current.includes(value) ? current.filter(v => v !== value) : [...current, value],
+        [key]: current.includes(value)
+          ? current.filter(v => v !== value)
+          : [...current, value],
       };
     });
   };
@@ -118,6 +112,7 @@ export default function ToursPage() {
       maxPrice: 500,
     });
   };
+
   return (
     <>
       <header className="tourBackraund">
