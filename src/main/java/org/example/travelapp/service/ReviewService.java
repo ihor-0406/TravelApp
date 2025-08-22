@@ -10,6 +10,8 @@ import org.example.travelapp.repository.ReviewRepository;
 import org.example.travelapp.repository.TourRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -20,38 +22,46 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final TourRepository tourRepository;
 
+    @Transactional(readOnly = true)
     public List<Review> findByTour(Tour tour) {
         return reviewRepository.findByTour(tour);
     }
 
+    @Transactional(readOnly = true)
     public List<Review> findByAccount(Account account) {
         return reviewRepository.findByAccount(account);
     }
 
+    @Transactional(readOnly = true)
     public Optional<Review> findByAccountAndTour(Account account, Tour tour) {
         return reviewRepository.findByAccountAndTour(account,tour);
     }
 
+    @Transactional
     public Review save(Review review) {
         return reviewRepository.save(review);
     }
 
+    @Transactional
     public void delete(Long reviewId, Account account) {
         Review review = reviewRepository.findById(reviewId).orElse(null);
 
         boolean isAuthor = review.getAccount().getId().equals(account.getId());
         boolean isAdmin = account.getRole().equals(Role.ADMIN);
 
-        if (isAdmin || isAuthor) {
+        if (isAdmin && !isAuthor) {
             throw new AccessDeniedException("You are not allowed to edit this review");
         }
 
         reviewRepository.delete(review);
     }
+
+    @Transactional
     public  void adminDelete(Long id) {
         reviewRepository.deleteById(id);
     }
 
+    @Transactional
     public void updateAverageRating(Tour tour) {
         List<Review> reviews = reviewRepository.findByTour(tour);
         if (reviews.isEmpty()) {
@@ -63,6 +73,7 @@ public class ReviewService {
         tourRepository.save(tour);
     }
 
+    @Transactional(readOnly = true)
     public  List<ReviewDto> getReviewsByTour(Tour tour, Account account) {
         return reviewRepository.findByTour(tour).stream()
                 .map(review ->{
@@ -84,6 +95,8 @@ public class ReviewService {
                         }).toList();
 
     }
+
+    @Transactional
     public void addReview(Tour tour, Account account, ReviewDto reviewDto) {
         Review review = new Review();
         review.setTour(tour);
@@ -95,6 +108,8 @@ public class ReviewService {
         reviewRepository.save(review);
         updateAverageRating(tour);
     }
+
+    @Transactional
     public  void editReview(Long reviewId, Account account, ReviewDto reviewDto) {
         Review review = reviewRepository.findById(reviewDto.getId()).orElse(null);
 
@@ -111,6 +126,7 @@ public class ReviewService {
         updateAverageRating(review.getTour());
     }
 
+    @Transactional(readOnly = true)
     public List<ReviewDto> getAllReviews() {
         return reviewRepository.findAll()
                 .stream()
@@ -118,6 +134,7 @@ public class ReviewService {
                 .toList();
     }
 
+    @Transactional
     public void deleteReviewByAdmin(Long id) {
         reviewRepository.deleteById(id);
     }

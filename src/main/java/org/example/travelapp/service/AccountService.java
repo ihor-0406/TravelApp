@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -29,26 +30,32 @@ public class AccountService {
     @Value("${app.upload.dir:src/main/resources/static/uploads/avatars}")
     private String uploadDir;
 
+    @Transactional(readOnly = true)
     public Optional<Account> findByEmail(String  email) {
         return accountRepository.findByEmail(email);
     }
 
+    @Transactional
     public Account save(Account account) {
         return accountRepository.save(account);
     }
 
+    @Transactional(readOnly = true)
     public Optional<Account> findById(Long id) {
         return accountRepository.findById(id);
     }
 
+    @Transactional
     public void delete(Long id) {
         accountRepository.deleteById(id);
     }
 
+    @Transactional(readOnly = true)
     public List<Account> findAll() {
         return accountRepository.findAll();
     }
 
+    @Transactional(readOnly = true)
     public Account getCurrentAccountOrNull() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated() || authentication.getPrincipal().equals("anonymousUser")) {
@@ -58,6 +65,7 @@ public class AccountService {
         return accountRepository.findByEmail(email).orElse(null);
     }
 
+    @Transactional(readOnly = true)
     public Optional<Account> getCurrentAccount() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -75,9 +83,7 @@ public class AccountService {
         return Optional.empty();
     }
 
-
-
-
+    @Transactional
     public String storeAvatar(MultipartFile file) {
         if (file == null || file.isEmpty()) {
             throw new IllegalArgumentException("Empty avatar file");

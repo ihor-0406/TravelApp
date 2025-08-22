@@ -150,7 +150,7 @@ public class AuthController {
         Optional<Account> userOpt = passwordResetService.validateToken(token);
 
         if (userOpt.isEmpty()) {
-            return ResponseEntity.badRequest().body("Неверный или истекший токен");
+            return ResponseEntity.badRequest().body("Invalid or expired token");
         }
 
         Account account = userOpt.get();

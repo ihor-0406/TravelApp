@@ -1,6 +1,5 @@
 package org.example.travelapp.service;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.travelapp.dto.DiscountDto;
 import org.example.travelapp.model.Discount;
@@ -8,6 +7,7 @@ import org.example.travelapp.model.Tour;
 import org.example.travelapp.repository.DiscountRepository;
 import org.example.travelapp.repository.TourRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,6 +20,7 @@ public class DiscountServiceImpl  implements DiscountService{
     private final TourRepository tourRepository;
 
     @Override
+    @Transactional
     public DiscountDto createDiscount(DiscountDto dto) {
         Discount discount=new Discount();
         discount.setValue(dto.getValue());
@@ -35,6 +36,7 @@ public class DiscountServiceImpl  implements DiscountService{
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<DiscountDto> getAllDiscounts() {
         return discountRepository
                 .findAll()
@@ -45,6 +47,7 @@ public class DiscountServiceImpl  implements DiscountService{
 
 
     @Override
+    @Transactional(readOnly = true)
     public DiscountDto getDiscountById(Long id){
         Discount discount=discountRepository.findById(id)
                 .orElse(null);
@@ -52,6 +55,7 @@ public class DiscountServiceImpl  implements DiscountService{
     }
 
     @Override
+    @Transactional
     public DiscountDto updateDiscount(Long id, DiscountDto dto) {
         Discount discount=discountRepository.findById(id).orElse(null);
 
@@ -65,6 +69,7 @@ public class DiscountServiceImpl  implements DiscountService{
     }
 
     @Override
+    @Transactional
     public void deleteDiscount(Long id) {
         discountRepository.deleteById(id);
     }

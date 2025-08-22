@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Value;
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.PaymentIntent;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.travelapp.dto.BookingDto;
 import org.example.travelapp.repository.AccountRepository;
@@ -15,6 +14,7 @@ import org.example.travelapp.repository.TourRepository;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -90,6 +90,7 @@ public class BookingServiceImpl implements BookingService {
 
 
     @Override
+    @Transactional(readOnly = true)
     public List<BookingDto> getAllBookings() {
         return bookingRepository.findAll()
                 .stream()
@@ -98,6 +99,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public BookingDto getBookingById(Long id) {
         return bookingRepository.findById(id)
                 .map(this :: mapToDto)

@@ -70,10 +70,20 @@ useEffect(() => {
     });
 };
 
-
-
   const renderStars = (rating) => {
     const fullStars = Math.floor(rating);
+
+
+    const hasDiscount =
+      Number(tour?.discountValue) > 0 &&
+      tour?.discountPrice != null &&
+      Number(tour.discountPrice) < Number(tour.price);
+
+    const unitPrice = hasDiscount ? Number(tour.discountPrice) : Number(tour.price);
+    const totalPrice = (unitPrice * people).toFixed(2);
+    const baseTotalPrice = (Number(tour?.price || 0) * people).toFixed(2);
+
+
     return (
       <>
         {[...Array(5)].map((_, i) => (
@@ -216,7 +226,7 @@ useEffect(() => {
               >
                 <i className="fa-solid fa-chevron-left"></i>
               </button>
-              <span className="px-3 fw-bold">{people}</span>
+              <span className="px-3 fw-bold mt-2">{people}</span>
               <button
                 type="button"
                 onClick={() => setPeople((prev) => prev + 1)}
@@ -226,19 +236,27 @@ useEffect(() => {
               </button>
             </div>
           </div>
-
-            
-            <div className="d-flex align-items-center gap-2">
-              {tour.discountValue && tour.discountPrice && tour.discountValue > 0 ? (
-                <>
+  
+          <div className="d-flex align-items-center gap-2">
+            {tour.discountValue && tour.discountPrice && tour.discountValue > 0 ? (
+              <>
                 <span className="text-decoration-line-through text-muted inter-small">
-                  €{Number(tour.price).toFixed(2)}</span>
-                <span className="text-danger  inter-large">€{Number(tour.discountPrice).toFixed(2)} <small className="text-danger inter-medium ">(-{tour.discountValue}%)</small></span></>
-                ) : (
-                <span className="h5 mb-0 ">€{Number(tour.price).toFixed(2)}</span>)}
-            </div>
+                  €{(Number(tour.price) * people).toFixed(2)}
+                </span>
 
-
+                <span className="text-danger inter-large">
+                  €{(Number(tour.discountPrice) * people).toFixed(2)}{" "}
+                  <small className="text-danger inter-medium">
+                    (-{tour.discountValue}%)
+                  </small>
+                </span>
+              </>
+            ) : (
+              <span className="h5 mb-0">
+                €{(Number(tour.price) * people).toFixed(2)}
+              </span>
+            )}
+          </div>
             <button className="btn btn-success rounded-pill my-3 w-100" onClick={() => setShowModal(true)}>Book now</button>
           </div>
         </div>

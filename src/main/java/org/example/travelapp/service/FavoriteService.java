@@ -1,12 +1,12 @@
 package org.example.travelapp.service;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.travelapp.model.Account;
 import org.example.travelapp.model.Favorite;
 import org.example.travelapp.model.Tour;
 import org.example.travelapp.repository.FavoriteRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,12 +17,14 @@ public class FavoriteService {
 
     private final FavoriteRepository favoriteRepository;
 
-    @Transactional
+    @Transactional(readOnly = true)
     public boolean isFavorite(Account account, Tour tour) {
         return favoriteRepository.existsByAccountAndTour(account, tour);
     }
 
+    @Transactional(readOnly = true)
     public List<Favorite> getFavoriteByUser(Account account) {
+
         return favoriteRepository.findByAccount(account);
     }
 

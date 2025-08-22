@@ -167,7 +167,10 @@
 .password-checklist li {
   margin-bottom: 0.2rem;
 }
-
+.invalid {
+  border: 1px solid red !important;
+  box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.15);
+}
 @media (min-width: 768px) {
   .login-image {
     display: block;

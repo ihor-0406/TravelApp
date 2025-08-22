@@ -7,10 +7,10 @@ import org.example.travelapp.model.*;
 import org.example.travelapp.repository.AccountRepository;
 import org.example.travelapp.repository.DiscountRepository;
 import org.example.travelapp.repository.TourRepository;
-import org.example.travelapp.repository.TourFilterRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -22,15 +22,18 @@ public class TourService {
     private final AccountRepository accountRepository;
     private final DiscountRepository discountRepository;
 
+    @Transactional(readOnly = true)
     public Page<Tour> findAll(Pageable pageable) {
         return tourRepository.findAll(pageable);
     }
 
+    @Transactional(readOnly = true)
     public Optional<Tour> findById(Long id) {
         return tourRepository.findByIdWithDiscounts(id);
     }
 
 
+    @Transactional
     public Tour create(TourCreateRequestDto dto, String createdByEmail) {
         Account account = accountRepository.findByEmail(createdByEmail)
                 .orElseThrow(() -> new RuntimeException("Account not found"));
@@ -51,6 +54,7 @@ public class TourService {
         return tourRepository.save(tour);
     }
 
+    @Transactional
     public Tour update(Long id, Tour updated, String adminEmail) {
         Tour existing = tourRepository.findById(id)
                 .orElseThrow();
@@ -60,16 +64,19 @@ public class TourService {
         return tourRepository.save(updated);
     }
 
+    @Transactional
     public Tour save(Tour tour) {
         return tourRepository.save(tour);
     }
 
+    @Transactional
     public void delete(Long id) {
         Tour existing = tourRepository.findById(id)
                 .orElseThrow();
         tourRepository.delete(existing);
     }
 
+    @Transactional(readOnly = true)
     public Page<Tour> filterTours(TourFilterRequstDto request, Pageable pageable) {
         return tourRepository.filterTours(request, pageable);
     }

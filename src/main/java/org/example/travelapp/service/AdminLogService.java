@@ -6,6 +6,7 @@ import org.example.travelapp.model.AdminLog;
 import org.example.travelapp.model.Tour;
 import org.example.travelapp.repository.AdminLogRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,6 +17,7 @@ public class AdminLogService {
 
     private final AdminLogRepository adminLogRepository;
 
+    @Transactional
     public void logAction(Account admin, String action, String details) {
         AdminLog adminLog = new AdminLog();
         adminLog.setAccount(admin);
@@ -26,6 +28,7 @@ public class AdminLogService {
         adminLogRepository.save(adminLog);
     }
 
+    @Transactional
     public List<AdminLog> getLogsByAdmin(Account admin) {
         return adminLogRepository.findByAccount(admin);
     }

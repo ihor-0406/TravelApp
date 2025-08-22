@@ -44,7 +44,7 @@ export default function BookingModal({ onClose, tourId, tourTitle, date, people,
 
   const price = tour?.discountPrice ?? tour?.price ?? 0;
   const basePrice = tour?.price ?? 0;
-  const isDiscounted = tour?.discountPrice !== null && tour?.discountPrice !== undefined;
+  const isDiscounted = tour?.discountPrice !== null && tour?.discountPrice !== undefined && tour.discountPrice < basePrice;
   const totalPrice = (price * count).toFixed(2);
 
 

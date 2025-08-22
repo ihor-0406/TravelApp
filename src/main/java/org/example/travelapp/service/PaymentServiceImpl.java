@@ -50,7 +50,7 @@ public class PaymentServiceImpl implements PaymentService {
             log.warn("Metadata is null for session: {}", session.getId());
         }
 
-        // Получение суммы из session.getAmountTotal()
+        // Получение суммы из
         if (session.getAmountTotal() != null) {
             try {
                 payment.setAmount(session.getAmountTotal().intValue());

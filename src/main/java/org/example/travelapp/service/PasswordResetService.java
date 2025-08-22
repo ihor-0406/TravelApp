@@ -5,8 +5,8 @@ import org.example.travelapp.model.Account;
 import org.example.travelapp.model.PasswordResetToken;
 import org.example.travelapp.repository.AccountRepository;
 import org.example.travelapp.repository.PasswordResetRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -16,12 +16,10 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class PasswordResetService {
 
-    @Autowired
     private final PasswordResetRepository tokenRepository;
-
-    @Autowired
     private final AccountRepository accountRepository;
 
+    @Transactional
     public String createToken (String email) {
         Optional<Account> userOpt = accountRepository.findByEmail(email);
 
@@ -37,12 +35,14 @@ public class PasswordResetService {
         return token;
     }
 
+    @Transactional(readOnly = true)
     public Optional<Account> validateToken (String token) {
         return tokenRepository.findByToken(token)
                 .filter(t -> t.getExpiration().isAfter(LocalDateTime.now()))
                 .map(PasswordResetToken :: getAccount);
     }
 
+    @Transactional
     public  void clearToken (String token) {
         tokenRepository.findByToken(token).ifPresent(tokenRepository::delete);
     }
